@@ -34,7 +34,36 @@ def text_analysis(soup):
     pass
 
 def images_analysis(soup):
-    pass
+    errors = []
+    images = soup.find_all("img")
+    
+    for img in images:
+        src = img.get("src", "[SRC MISSING]")
+        alt = img.get("alt", "")
+        width = img.get("width")
+        height = img.get("height")
+
+        # Vérification de l'attribut alt
+        if not alt:
+            errors.append(f"Image '{src}' : L'attribut 'alt' est manquant.")
+        elif len(alt) < 5:
+            errors.append(f"Image '{src}' : L'attribut 'alt' est trop court ({len(alt)} caractères).")
+        elif len(alt) > 100:
+            errors.append(f"Image '{src}' : L'attribut 'alt' est trop long ({len(alt)} caractères).")
+        
+        # Vérification de la taille des images
+        if not width or not height:
+            errors.append(f"Image '{src}' : Taille non spécifiée (ajouter 'width' et 'height').")
+        
+        # Vérification du format d'image
+        if not re.search(r'\.webp$|\.avif$', src, re.IGNORECASE):
+            errors.append(f"Image '{src}' : Utiliser un format moderne comme WebP ou AVIF.")
+        
+        # Vérification du poids des images (exemple basique basé sur URL)
+        if "large" in src.lower() or "uncompressed" in src.lower():
+            errors.append(f"Image '{src}' : L'image semble volumineuse, pensez à la compresser.")
+    
+    return errors
 
 def keywords_analysis(soup):
     pass
@@ -128,10 +157,7 @@ def accessibility_analysis(soup):
     
     errors = []
 
-    # 1. Balises alt manquantes pour les images
-    for img in soup.find_all('img'):
-        if not img.get('alt'):
-            errors.append("Balise <img> sans attribut 'alt'. Il est essentiel d'ajouter un texte alternatif pour les images.")
+    # 1. Balises alt manquantes pour les images (déménage dans image_analyse)
 
     # 2. Vérification de "user-scalable='no'" dans les balises meta
     if soup.find('meta', attrs={'name': 'viewport', 'content': re.compile('.*user-scalable=no.*')}):
