@@ -1,10 +1,12 @@
 <?php
 
+require_once('controller/AnalysisController.php');
+require_once('controller/InformationController.php');
 require_once('controller/UserController.php');
 
 define('ROOT',__dir__);
-define('DEFAULT_CONTROLLER','');
-define('DEFAULT_ACTION','');
+define('DEFAULT_CONTROLLER','analysis');
+define('DEFAULT_ACTION','analysis');
 
 $controller;
 $action;

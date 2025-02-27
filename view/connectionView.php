@@ -9,7 +9,7 @@
 </head>
 <body>
 <div class="login-container">
-    <h1>Inscription</h1>
+    <h1>Connexion</h1>
     <p>Profitez d'une analyse gratuite de votre site avec :</p>
     <ul>
         <li>✓ Analyse de vos sites web</li>
@@ -27,15 +27,11 @@
         </div>
     <?php endif; ?>
 
-    <form action="/Visiboost/Visiboost/addUser" method="POST">
-        <input type="text" name="firstname" placeholder="Prénom" value="<?php echo htmlspecialchars($_POST['firstname'] ?? ''); ?>" required>
-        <input type="text" name="surname" placeholder="Nom" value="<?php echo htmlspecialchars($_POST['surname'] ?? ''); ?>" required>
-        <input type="email" name="email" placeholder="Email" value="<?php echo htmlspecialchars($_POST['email'] ?? ''); ?>" required>
+    <form action="/Visiboost/Visiboost/getUser" method="POST">
+        <input type="email" name="email" placeholder="Email" required>
         <input type="password" name="password" placeholder="Mot de passe" required>
-        <input type="password" name="passwordComfirmation" placeholder="Comfirmer mot de passe" required>
         <button type="submit">S'inscrire</button>
     </form>
-    <p>Déjà un compte ? <a href="#">Se connecter</a></p>
 </div>
 </body>
 </html>

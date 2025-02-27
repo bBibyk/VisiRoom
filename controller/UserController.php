@@ -18,6 +18,7 @@ class UserController {
             $surname = trim($_POST['surname'] ?? '');
             $email = trim($_POST['email'] ?? '');
             $password = $_POST['password'] ?? '';
+            $passwordComfirmation = $_POST['passwordComfirmation'] ?? '';
 
             // Validation des champs
             if (strlen($firstname) > 100) {
@@ -34,6 +35,9 @@ class UserController {
             }
             if (strlen($password) < 8 || !preg_match('/[0-9]/', $password) || !preg_match('/[\W]/', $password)) {
                 $errors[] = "Le mot de passe doit contenir au moins 8 caractères, un chiffre et un caractère spécial.";
+            }
+            if ($passwordComfirmation != $password) {
+                $errors[] = "Mots de passe non identiques";
             }
             if (UserManager::existsEmail($email)) {
                 $errors[] = "Cet email est déjà utilisé.";
@@ -52,5 +56,23 @@ class UserController {
 
         // Afficher à nouveau le formulaire avec les erreurs
         require_once 'view/registrationView.php';
+    }
+
+    public static function connection(){
+        require_once 'view/connectionView.php';
+    }
+
+    public static function get(){
+        session_start();
+        $errors = [];
+
+        $user = UserManager::getbyEmail($_POST["email"]);
+
+        if(!empty($user) && $user != null){
+            if(password_verify($_POST["password"], $user->getPassword())){
+                $_SESSION["email"] = $user->getEmail();
+            }
+        }
+        require_once 'view/connectionView.php';
     }
 }

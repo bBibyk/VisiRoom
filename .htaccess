@@ -3,5 +3,15 @@ Options +FollowSymlinks
 RewriteEngine on
 RewriteCond %{REQUEST_FILENAME} !(.*)\.(css|js|png|jpg)$
 
-#User
+#Analysis
+RewriteRule ^analysis index.php?controller=analysis&action=analysis
+RewriteRule ^addAnalysis index.php?controller=analysis&action=add
 
+#Information
+RewriteRule ^aboutus index.php?controller=information&action=aboutus
+
+#User
+RewriteRule ^registration index.php?controller=user&action=registration
+RewriteRule ^addUser index.php?controller=user&action=add
+RewriteRule ^connection index.php?controller=user&action=connection
+RewriteRule ^getUser index.php?controller=user&action=get
