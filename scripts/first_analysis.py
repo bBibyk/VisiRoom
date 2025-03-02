@@ -46,9 +46,9 @@ def images_analysis(soup):
         # Vérification de l'attribut alt
         if not alt:
             errors.append(f"Image '{src}' : L'attribut 'alt' est manquant.")
-        elif len(alt) &lt;/ 5:
+        elif len(alt) < 5:
             errors.append(f"Image '{src}' : L'attribut 'alt' est trop court ({len(alt)} caractères).")
-        elif len(alt) &gt;/ 100:
+        elif len(alt) > 100:
             errors.append(f"Image '{src}' : L'attribut 'alt' est trop long ({len(alt)} caractères).")
         
         # Vérification de la taille des images
@@ -166,7 +166,7 @@ def accessibility_analysis(soup):
     # 3. Vérification du maximum scale &lt;/ 5
     viewport_meta = soup.find('meta', attrs={'name': 'viewport'})
     if viewport_meta and 'maximum-scale' in viewport_meta.get('content', ''):
-        if float(re.search(r"maximum-scale=([0-9.]+)", viewport_meta['content']).group(1)) &lt;/ 5:
+        if float(re.search(r"maximum-scale=([0-9.]+)", viewport_meta['content']).group(1)) < 5:
             errors.append("La valeur 'maximum-scale' dans la balise &lt;/meta&gt;/ est inférieure à 5. Il est recommandé de permettre un plus grand zoom.")
 
     # 4. Vérification du contraste entre le fond et le premier plan (simplifié)
@@ -185,7 +185,7 @@ def accessibility_analysis(soup):
                 bg_color_rgb = webcolors.name_to_rgb(bg_color_value) if bg_color_value.isalpha() else webcolors.hex_to_rgb(bg_color_value)
                 
                 contrast_ratio = sum(abs(c1 - c2) for c1, c2 in zip(color_rgb, bg_color_rgb))
-                if contrast_ratio &lt;/ 100:  # Seuil arbitraire pour faible contraste
+                if contrast_ratio < 100:  # Seuil arbitraire pour faible contraste
                     errors.append(f"Contraste insuffisant entre la couleur {color_value} et le fond {bg_color_value}.")
             except :
                 pass
