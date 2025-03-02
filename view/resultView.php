@@ -17,7 +17,7 @@
     <h1>Retour des Analyses</h1>
     <div class="analysis-section">
         <h2>1 - HTML :</h2>
-        <p>Exemple de description d’une analyse des balises HTML.</p>
+        <?php echo '<p>'.$resultHtml.'</p>' ?>
     </div>
     <div class="analysis-section">
         <h2>2 - Performance :</h2>
