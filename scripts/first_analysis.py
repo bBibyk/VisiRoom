@@ -46,9 +46,9 @@ def images_analysis(soup):
         # Vérification de l'attribut alt
         if not alt:
             errors.append(f"Image '{src}' : L'attribut 'alt' est manquant.")
-        elif len(alt) < 5:
+        elif len(alt) &lt;/ 5:
             errors.append(f"Image '{src}' : L'attribut 'alt' est trop court ({len(alt)} caractères).")
-        elif len(alt) > 100:
+        elif len(alt) &gt;/ 100:
             errors.append(f"Image '{src}' : L'attribut 'alt' est trop long ({len(alt)} caractères).")
         
         # Vérification de la taille des images
@@ -77,20 +77,20 @@ def tags_analysis(soup):
     
     for tag in non_semantic_tags:
         if soup.find_all(tag):
-            errors.append(f"Utilisation de la balise non sémantique <{tag}>.")
+            errors.append(f"Utilisation de la balise non sémantique &lt;/{tag}&gt;/.")
     
     # 2. Vérification des balises meta manquantes
     meta_tags = ['description', 'robots', 'keywords']
     for meta in meta_tags:
         if not soup.find('meta', attrs={'name': meta}):
-            errors.append(f"Balise <meta> {meta} manquante.")
+            errors.append(f"Balise &lt;/meta&gt;/ {meta} manquante.")
 
-    # 3. Vérification de la présence des balises <h1> et <title>
+    # 3. Vérification de la présence des balises &lt;/h1&gt;/ et &lt;/title&gt;/
     if not soup.find('h1'):
-        errors.append("Balise <h1> manquante.")
+        errors.append("Balise &lt;/h1&gt;/ manquante.")
     
     if not soup.find('title'):
-        errors.append("Balise <title> manquante.")
+        errors.append("Balise &lt;/title&gt;/ manquante.")
     
     # 4. Vérification des styles en ligne (inline styles)
     inline_styles = soup.find_all(style=True)
@@ -133,18 +133,18 @@ def accessibility_analysis(soup):
     # Vérifier les rôles communs et leur compatibilité avec les éléments HTML
         role_compatibility = {
             'button': ['button', 'a', 'div', 'span'],  # un bouton peut être un div, un span, ou un a (avec rôle)
-            'link': ['a'],  # un lien doit être une balise <a>
-            'dialog': ['div', 'section'],  # Un dialog est souvent une <div> ou une <section>
-            'checkbox': ['input'],  # Un checkbox doit être un <input> de type checkbox
-            'radio': ['input'],  # Un radio doit être un <input> de type radio
-            'textbox': ['input', 'textarea'],  # Un textbox peut être un <input> ou un <textarea>
-            'combobox': ['input', 'select'],  # Un combobox peut être un <input> ou un <select>
-            'menuitem': ['div', 'button'],  # Un menuitem peut être un <div> ou un <button>
-            'listbox': ['div', 'ul'],  # Un listbox peut être une <div> ou une <ul>
-            'progressbar': ['div', 'progress'],  # Un progressbar est souvent un <div> ou un <progress>
-            'slider': ['input'],  # Un slider doit être un <input> de type range
-            'alertdialog': ['div'],  # Un alertdialog est souvent une <div>
-            'heading': ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'],  # Un heading doit être un <h1>, <h2>, etc.
+            'link': ['a'],  # un lien doit être une balise &lt;/a&gt;/
+            'dialog': ['div', 'section'],  # Un dialog est souvent une &lt;/div&gt;/ ou une &lt;/section&gt;/
+            'checkbox': ['input'],  # Un checkbox doit être un &lt;/input&gt;/ de type checkbox
+            'radio': ['input'],  # Un radio doit être un &lt;/input&gt;/ de type radio
+            'textbox': ['input', 'textarea'],  # Un textbox peut être un &lt;/input&gt;/ ou un &lt;/textarea&gt;/
+            'combobox': ['input', 'select'],  # Un combobox peut être un &lt;/input&gt;/ ou un &lt;/select&gt;/
+            'menuitem': ['div', 'button'],  # Un menuitem peut être un &lt;/div&gt;/ ou un &lt;/button&gt;/
+            'listbox': ['div', 'ul'],  # Un listbox peut être une &lt;/div&gt;/ ou une &lt;/ul&gt;/
+            'progressbar': ['div', 'progress'],  # Un progressbar est souvent un &lt;/div&gt;/ ou un &lt;/progress&gt;/
+            'slider': ['input'],  # Un slider doit être un &lt;/input&gt;/ de type range
+            'alertdialog': ['div'],  # Un alertdialog est souvent une &lt;/div&gt;/
+            'heading': ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'],  # Un heading doit être un &lt;/h1&gt;/, &lt;/h2&gt;/, etc.
         }
         
         # Vérifier si l'élément a un rôle et si ce rôle est compatible avec l'élément HTML
@@ -163,11 +163,11 @@ def accessibility_analysis(soup):
     if soup.find('meta', attrs={'name': 'viewport', 'content': re.compile('.*user-scalable=no.*')}):
         errors.append("L'attribut 'user-scalable' est défini sur 'no'. Il est recommandé de permettre l'échelle de la page.")
 
-    # 3. Vérification du maximum scale < 5
+    # 3. Vérification du maximum scale &lt;/ 5
     viewport_meta = soup.find('meta', attrs={'name': 'viewport'})
     if viewport_meta and 'maximum-scale' in viewport_meta.get('content', ''):
-        if float(re.search(r"maximum-scale=([0-9.]+)", viewport_meta['content']).group(1)) < 5:
-            errors.append("La valeur 'maximum-scale' dans la balise <meta> est inférieure à 5. Il est recommandé de permettre un plus grand zoom.")
+        if float(re.search(r"maximum-scale=([0-9.]+)", viewport_meta['content']).group(1)) &lt;/ 5:
+            errors.append("La valeur 'maximum-scale' dans la balise &lt;/meta&gt;/ est inférieure à 5. Il est recommandé de permettre un plus grand zoom.")
 
     # 4. Vérification du contraste entre le fond et le premier plan (simplifié)
     # Pour simplifier, on suppose qu'il y a un contraste adéquat si des couleurs claires et foncées sont définies dans les styles en ligne
@@ -185,7 +185,7 @@ def accessibility_analysis(soup):
                 bg_color_rgb = webcolors.name_to_rgb(bg_color_value) if bg_color_value.isalpha() else webcolors.hex_to_rgb(bg_color_value)
                 
                 contrast_ratio = sum(abs(c1 - c2) for c1, c2 in zip(color_rgb, bg_color_rgb))
-                if contrast_ratio < 100:  # Seuil arbitraire pour faible contraste
+                if contrast_ratio &lt;/ 100:  # Seuil arbitraire pour faible contraste
                     errors.append(f"Contraste insuffisant entre la couleur {color_value} et le fond {bg_color_value}.")
             except :
                 pass
@@ -205,7 +205,7 @@ def accessibility_analysis(soup):
         if role:
             # Vérification des rôles ARIA valides pour l'élément
             if not is_role_compatible_with_element(element, role):
-                errors.append(f"L'élément <{element.name}> avec le rôle '{role}' n'est pas compatible.")
+                errors.append(f"L'élément &lt;/{element.name}&gt;/ avec le rôle '{role}' n'est pas compatible.")
             
             # Vérification des correspondances entre les attributs ARIA et leurs rôles
             for attr in element.attrs:
@@ -215,7 +215,7 @@ def accessibility_analysis(soup):
     # 7. Vérification des noms accessibles pour les boutons, liens et menuitems
     for element in soup.find_all(['button', 'a', 'menuitem']):
         if not element.get('aria-label') and not element.get('title') and not element.get_text(strip=True):
-            errors.append(f"L'élément <{element.name}> n'a pas de nom accessible.")
+            errors.append(f"L'élément &lt;/{element.name}&gt;/ n'a pas de nom accessible.")
 
     # 8. Vérification de la présence des titres sur les dialogues ou alertes
     for element in soup.find_all(attrs={'role': 'dialog'}):
@@ -230,19 +230,19 @@ def accessibility_analysis(soup):
     # 10. Vérification des éléments de formulaire avec des étiquettes associées
     for input_elem in soup.find_all('input'):
         if not input_elem.get('aria-label') and not input_elem.get('aria-labelledby') and not input_elem.find_parent('label'):
-            errors.append(f"Le champ de formulaire <input> n'a pas de label accessible.")
+            errors.append(f"Le champ de formulaire &lt;/input&gt;/ n'a pas de label accessible.")
 
-    # 11. Vérification des <frames> et <iframes> avec un titre
+    # 11. Vérification des &lt;/frames&gt;/ et &lt;/iframes&gt;/ avec un titre
     for frame in soup.find_all(['frame', 'iframe']):
         if not frame.get('title'):
-            errors.append(f"L'élément <{frame.name}> n'a pas d'attribut 'title'.")
+            errors.append(f"L'élément &lt;/{frame.name}&gt;/ n'a pas d'attribut 'title'.")
 
-    # 12. Vérification de la validité de l'attribut [lang] dans le <html>
+    # 12. Vérification de la validité de l'attribut [lang] dans le &lt;/html&gt;/
     html_tag = soup.find('html')
     if html_tag:
         lang_attr = html_tag.get('lang')
         if not lang_attr:
-            errors.append("L'élément <html> n'a pas d'attribut 'lang'.")
+            errors.append("L'élément &lt;/html&gt;/ n'a pas d'attribut 'lang'.")
 
     return errors
 
