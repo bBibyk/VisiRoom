@@ -5,7 +5,7 @@ body {
     margin: 0;
     padding: 0;
     background: linear-gradient(135deg, #fdfdfd, #88fdf3); /* Dégradé chaud et accueillant */
-    color: #d7e0e3;
+    color: black;
     font-family: 'Roboto', sans-serif;
     text-align: center;
 }
