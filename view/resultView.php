@@ -15,14 +15,13 @@
 
 <div class="analysis-container">
     <h1>Retour des Analyses</h1>
+
     <div class="analysis-section">
         <h2>1 - HTML :</h2>
         <?php echo '<p>'.$resultHtml.'</p>' ?>
     </div>
-    <div class="analysis-section">
-        <h2>2 - Performance :</h2>
-        <p>Analyse de la rapidité de chargement et des performances du site.</p>
-    </div>
+
+
     <div class="analysis-section">
         <h2>3 - Modifications à faire :</h2>
         <ul>

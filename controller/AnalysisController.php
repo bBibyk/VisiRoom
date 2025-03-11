@@ -35,16 +35,18 @@ class AnalysisController{
 
         $url = $_POST["domainName"];
         $resultHtml;
+        $resultCrawler;
+        $resultHtmlCrawler;
+        $resultHtmlCrawlerParalel;
 
         echo $url;
 
         if(AnalysisController::domaineExiste($url)){
             $pythonPath = "C:\Users\Admin\AppData\Local\Programs\Python\Python312\python.exe";
-            $scriptPath = "scripts/test.py";
-            $command = escapeshellcmd("$pythonPath $scriptPath $url 2>&1");
-            $output = shell_exec($pythonPath." ".$scriptPath." ".$url." 2>&1");
+            $scriptPathHtml = "scripts/first_analysis.py";
 
-            $resultHtml = AnalysisController::formatJsonResponse($output);
+            $resultHtml = AnalysisController::displayJson(shell_exec($pythonPath." ".$scriptPathHtml." ".$url." 2>&1"));
+
             require_once 'view/resultView.php';    
         }else{
             $message = "Ce nom de domaine n'existe pas.";
@@ -68,37 +70,40 @@ class AnalysisController{
         return false; // Le domaine n'existe pas
     }
     
-
-    static function formatJsonResponse($json) {
-        $data = json_decode($json, true);
-        $result = "";
-    
-        if (!$data) {
-            return "<p>Aucune donnée disponible.</p>";
-        }
-    
-        foreach ($data as $url => $sections) {
-            $result .= "<h3>Analyse pour : $url</h3>";
-            foreach ($sections as $section => $errors) {
-                $result .= "<p><strong>" . ucfirst($section) . " :</strong></p>";
-                if (empty($errors)) {
-                    $result .= "<p>Aucune erreur détectée.</p>";
-                } else {
-                    $result .= "<ul>";
-                    foreach ($errors as $error) {
-                        // Encapsuler les balises <input> et <button> pour éviter l'exécution
-                        $escapedError = str_replace('<input', '&lt;input', $error);
-                        $escapedError = str_replace('</input>', '&lt;/input&gt;', $escapedError);
-                        $escapedError = str_replace('<button', '&lt;button', $escapedError);
-                        $escapedError = str_replace('</button>', '&lt;/button&gt;', $escapedError);
-                        $result .= "<li>$escapedError</li>";
-                    }
-                    $result .= "</ul>";
-                }
+    private static function displayJson(array|string $json): void {
+        // Si la chaîne JSON est passée, la convertir en tableau
+        if (is_string($json)) {
+            $json = json_decode($json, true);
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                echo "<div style='color: red;'>Erreur de décodage JSON : " . json_last_error_msg() . "</div>";
+                return;
             }
-            $result .= "<hr>";
         }
-    
-        return $result;
+
+        echo '<div style="font-family: Arial, sans-serif; padding: 10px; background: #f4f4f4; border-radius: 8px;">';
+        echo '<h3 style="color: #333;">Résultat JSON :</h3>';
+        echo '<ul style="list-style: none; padding-left: 20px;">';
+        self::renderJson($json);
+        echo '</ul>';
+        echo '</div>';
+    }
+
+    private static function renderJson(array $json): void {
+        foreach ($json as $key => $value) {
+            echo '<li style="margin-bottom: 10px;">';
+            echo '<strong style="color: #007BFF;">' . htmlspecialchars($key) . ':</strong> ';
+            if (is_array($value)) {
+                echo '<ul style="margin-top: 5px; padding-left: 20px;">';
+                AnalysisController::renderJson($value);
+                echo '</ul>';
+            } elseif (is_bool($value)) {
+                echo $value ? '<span style="color: green;">true</span>' : '<span style="color: red;">false</span>';
+            } elseif (is_null($value)) {
+                echo '<span style="color: gray;">null</span>';
+            } else {
+                echo htmlspecialchars((string)$value);
+            }
+            echo '</li>';
+        }
     }
 }
