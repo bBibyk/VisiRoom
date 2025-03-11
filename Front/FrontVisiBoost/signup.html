@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inscription - VisiBoost</title>
+    <link rel="stylesheet" href="css/signup.css">
+    <link href="https://fonts.googleapis.com/css2?family=Lilita+One&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<!--  Ajout d'un conteneur pour la navbar -->
+<div id="navbar-container"></div>
+
+<script>
+    fetch("navbar.html")
+        .then(response => response.text())
+        .then(data => {
+            document.getElementById("navbar-container").innerHTML = data;
+
+            // ✅ Charger le CSS après l'ajout de la navbar
+            let link = document.createElement("link");
+            link.rel = "stylesheet";
+            link.href = "css/navbar.css"; // Vérifie bien le chemin du fichier CSS
+            document.head.appendChild(link);
+        })
+        .catch(error => console.error("Erreur lors du chargement de la navbar :", error));
+</script>
+
+<!-- Contenu principal -->
+<div class="signup-container">
+    <h1>Inscription</h1>
+    <p>Rejoignez VisiBoost et optimisez votre référencement !</p>
+
+    <form action="signup_process.php" method="post">
+        <input type="text" name="name" placeholder="Nom complet" required>
+        <input type="email" name="email" placeholder="Adresse e-mail" required>
+        <input type="password" name="password" placeholder="Mot de passe" required>
+        <button type="submit">Créer un compte</button>
+    </form>
+
+    <p>Déjà inscrit ? <a href="login.html">Connexion</a></p>
+</div>
+
+</body>
+</html>

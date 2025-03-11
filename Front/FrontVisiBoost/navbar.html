@@ -1,0 +1,23 @@
+<nav class="navbar">
+    <div class="left-menu">
+        <div class="logo-container">
+            <img src="image/logo.png" alt="Logo VisiBoost" class="logo-img">
+            <div class="logo">VisiBoost</div>
+        </div>
+        <ul class="nav-links">
+            <li><a href="home.html">Accueil</a></li>
+            <li><a href="à propo.html">À propos de nous</a></li>
+            <li><a href="subscribe.html">S’abonner</a></li>
+            <li><a href="contact.html">Contact</a></li>
+            <li><a href="#" onclick="logout()">Déconnexion</a></li>
+
+        </ul>
+    </div>
+</nav>
+<script>
+    function logout() {
+        localStorage.removeItem("userLoggedIn"); // ✅ Supprime l'état connecté
+        window.location.href = "home.html"; // ✅ Redirige vers l'accueil
+    }
+</script>
+

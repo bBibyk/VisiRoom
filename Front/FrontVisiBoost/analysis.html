@@ -2,66 +2,81 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Analyse SEO - VisiBoost</title>
+    <!-- Lien vers ton fichier CSS externe -->
     <link rel="stylesheet" href="css/analysis.css">
     <link href="https://fonts.googleapis.com/css2?family=Lilita+One&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
 </head>
 <body>
 
-<!-- Barre de navigation -->
-<nav class="navbar">
-    <div class="logo-container">
-        <img src="image/logo.png" alt="Logo VisiBoost" class="logo-img">
-        <div class="logo">VisiBoost</div>
-    </div>
-    <ul>
-        <li><a href="home.html">Accueil</a></li>
-        <li><a href="about.html">À propos de nous</a></li>
-        <li><a href="subscribe.html">S’abonner</a></li>
-        <li><a href="contact.html">Contact</a></li>
-    </ul>
-</nav>
-
-<div class="analysis-container">
-    <h1>Retour des Analyses</h1>
-    <div class="analysis-section">
-        <h2>1 - HTML :</h2>
-        <p>Exemple de description d’une analyse des balises HTML.</p>
-    </div>
-    <div class="analysis-section">
-        <h2>2 - Performance :</h2>
-        <p>Analyse de la rapidité de chargement et des performances du site.</p>
-    </div>
-    <div class="analysis-section">
-        <h2>3 - Modifications à faire :</h2>
-        <ul>
-            <li>Corriger les balises mal structurées.</li>
-            <li>Optimiser les images pour un chargement plus rapide.</li>
-            <li>Améliorer l’accessibilité et le référencement.</li>
-        </ul>
-    </div>
-
-    <div class="advantages-section">
-        <h2>Avantages de l'Abonnement</h2>
-        <ul class="features-list">
-            <li>Analyse de vos sites web - Illimité</li>
-            <li>Repérage des erreurs</li>
-            <li>Conseils personnalisés</li>
-            <li>Suivi de vos analyses</li>
-            <li>Analyse concurrentielle</li>
-            <li>Analyse par nos experts</li>
-            <li>Application des conseils par nos experts</li>
-        </ul>
-        <button class="subscribe-button" onclick="redirectToSubscribe()">S’abonner</button>
-    </div>
-</div>
+<div id="navbar-container"></div>
 
 <script>
-    function redirectToSubscribe() {
-        window.location.href = "subscribe.html";
-    }
+    fetch("navbar.html")
+        .then(response => response.text())
+        .then(data => {
+            document.getElementById("navbar-container").innerHTML = data;
+
+            // ✅ Charger le CSS après l'ajout de la navbar
+            let link = document.createElement("link");
+            link.rel = "stylesheet";
+            link.href = "css/navbar.css"; // Vérifie bien le chemin du fichier CSS
+            document.head.appendChild(link);
+        })
+        .catch(error => console.error("Erreur lors du chargement de la navbar :", error));
 </script>
+<!-- Contenu principal -->
+<div class="analysis-container">
+    <h1>Analyse SEO - Résultats</h1>
+
+    <!-- Bloc 1 : HTML Sémantique -->
+    <div class="analysis-section">
+        <h2>1 - HTML Sémantique</h2>
+        <p><strong>Problème détecté :</strong> Trop de <code>&lt;div&gt;</code> sans signification.</p>
+        <p><strong>Solution :</strong> Utilisez <code>&lt;header&gt;</code>, <code>&lt;section&gt;</code>, <code>&lt;article&gt;</code> et <code>&lt;footer&gt;</code> pour structurer correctement le contenu.</p>
+    </div>
+
+    <!-- Bloc 2 : Tags (Balises) -->
+    <div class="analysis-section">
+        <h2>2 - Tags (Balises)</h2>
+        <p><strong>Problème :</strong> La balise <code>&lt;title&gt;</code> est trop longue et la <code>&lt;meta description&gt;</code> est absente.</p>
+        <p><strong>Solution :</strong> Limitez le <code>&lt;title&gt;</code> à 60 caractères et ajoutez une <code>&lt;meta description&gt;</code> de 150 caractères.</p>
+    </div>
+
+    <!-- Bloc 3 : Accessibilité -->
+    <div class="analysis-section">
+        <h2>3 - Accessibilité</h2>
+        <p><strong>Problème détecté :</strong> Vos boutons et liens n'ont pas d'attribut <code>aria-label</code>.</p>
+        <p><strong>Solution :</strong> Ajoutez <code>aria-label="Description"</code> sur les éléments interactifs et vérifiez le contraste de couleur.</p>
+    </div>
+
+    <!-- Bloc 4 : Mots-clés (Keywords) -->
+    <div class="analysis-section">
+        <h2>4 - Mots-clés (Keywords)</h2>
+        <p><strong>Problème détecté :</strong> Vos mots-clés sont trop génériques.</p>
+        <p><strong>Solution :</strong> Utilisez des mots-clés longue traîne et des variantes adaptées aux recherches des utilisateurs.</p>
+    </div>
+
+    <!-- Bloc 5 : Images -->
+    <div class="analysis-section">
+        <h2>5 - Images</h2>
+        <p><strong>Problème détecté :</strong> Certaines images n'ont pas d'attribut <code>alt</code>.</p>
+        <p><strong>Solution :</strong> Ajoutez <code>alt="Description de l'image"</code> et compressez les images pour améliorer le temps de chargement.</p>
+    </div>
+
+
+
+    <!-- Pied de page -->
+    <footer class="footer">
+        <p>© 2025 VisiBoost - Tous droits réservés.</p>
+    </footer>
+
+    <script>
+        function redirectToSubscribe() {
+            window.location.href = "subscribe.html";
+        }
+    </script>
 
 </body>
 </html>

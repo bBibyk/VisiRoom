@@ -8,7 +8,7 @@
 </head>
 <body>
 <div class="login-container">
-    <h1>Connexion / Inscription</h1>
+    <h1>Connexion</h1>
     <p>Profitez d'une analyse gratuite de votre site avec :</p>
     <ul>
         <li>✓ Analyse de vos sites web</li>
@@ -28,5 +28,19 @@
         window.location.href = "analysis.html";
     }
 </script>
+<script>
+    // Vérifier si l'utilisateur est déjà connecté
+    if (localStorage.getItem("userLoggedIn") === "true") {
+        window.location.href = "analysis.html"; // ✅ Redirection directe vers l'analyse
+    }
+
+    function login() {
+        // Simuler une connexion réussie
+        localStorage.setItem("userLoggedIn", "true");
+        window.location.href = "analysis.html"; // ✅ Rediriger après connexion
+    }
+</script>
+
+
 </body>
 </html>

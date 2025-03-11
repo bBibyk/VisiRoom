@@ -10,18 +10,22 @@
 </head>
 <body>
 
-<nav class="navbar">
-    <div class="logo-container">
-        <img src="image/logo.png" alt="Logo VisiBoost" class="logo-img">
-        <div class="logo">VisiBoost</div>
-    </div>
-    <ul>
-        <li><a href="home.html">Accueil</a></li>
-        <li><a href="about.html">À propos de nous</a></li>
-        <li><a href="subscribe.html">S’abonner</a></li>
-        <li><a href="contact.html">Contact</a></li>
-    </ul>
-</nav>
+<div id="navbar-container"></div>
+
+<script>
+    fetch("navbar.html")
+        .then(response => response.text())
+        .then(data => {
+            document.getElementById("navbar-container").innerHTML = data;
+
+            // ✅ Charger le CSS après l'ajout de la navbar
+            let link = document.createElement("link");
+            link.rel = "stylesheet";
+            link.href = "css/navbar.css"; // Vérifie bien le chemin du fichier CSS
+            document.head.appendChild(link);
+        })
+        .catch(error => console.error("Erreur lors du chargement de la navbar :", error));
+</script>
 
 <div class="about-container">
     <h1>Qui Sommes-Nous ?</h1>
