@@ -9,9 +9,11 @@ RewriteRule ^addAnalysis index.php?controller=analysis&action=add
 
 #Information
 RewriteRule ^aboutus index.php?controller=information&action=aboutus
+RewriteRule ^contact index.php?controller=information&action=contact
 
 #User
 RewriteRule ^registration index.php?controller=user&action=registration
+RewriteRule ^subscribe index.php?controller=user&action=subscribe
 RewriteRule ^addUser index.php?controller=user&action=add
 RewriteRule ^connection index.php?controller=user&action=connection
 RewriteRule ^getUser index.php?controller=user&action=get

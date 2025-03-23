@@ -9,6 +9,10 @@ class UserController {
         require_once 'view/registrationView.php';
     }
 
+    public static function subscribe() {
+        require_once 'view/subscribeView.php';
+    }
+
     // Traiter l'inscription
     public static function add() {
         $errors = [];
@@ -22,7 +26,7 @@ class UserController {
 
             // Validation des champs
             if (strlen($firstname) > 100) {
-                $errors[] = "Le prénom ne doit pas dépasser 100 caractères.";
+                 $errors[] = "Le prénom ne doit pas dépasser 100 caractères.";
             }
             if (strlen($surname) > 100) {
                 $errors[] = "Le nom ne doit pas dépasser 100 caractères.";
@@ -47,7 +51,8 @@ class UserController {
             if (empty($errors)) {
                 $user = new User(0, $firstname, $surname, $email, $password);
                 if (UserManager::add($user)) {
-                    $errors[] = "Compte enregistré.";
+                    $_SESSION["email"] = $user->getEmail();
+                    header('location: analysis');
                 } else {
                     $errors[] = "Une erreur est survenue lors de l'inscription.";
                 }
@@ -63,7 +68,6 @@ class UserController {
     }
 
     public static function get(){
-        session_start();
         $errors = [];
 
         $user = UserManager::getbyEmail($_POST["email"]);
@@ -71,8 +75,10 @@ class UserController {
         if(!empty($user) && $user != null){
             if(password_verify($_POST["password"], $user->getPassword())){
                 $_SESSION["email"] = $user->getEmail();
+                header('location: analysis');
             }
         }
+
         require_once 'view/connectionView.php';
     }
 }

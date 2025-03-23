@@ -125,3 +125,18 @@ a {
 a:hover {
     text-decoration: underline;
 }
+
+/*Json parser*/
+.result-h1{
+
+}
+
+.result-h2{
+
+}
+
+.result-text{
+    display: block;
+    text-align: left;
+    font-size: 12px;
+}
