@@ -1,36 +1,23 @@
 import requests
 from dotenv import load_dotenv
 import os
+from mistralai import Mistral
 
 load_dotenv()
 
-API_KEY = os.getenv("MISTRAL_API_KEY")
+api_key = os.getenv("MISTRAL_API_KEY")
 
-API_URL = "https://api.mistral.ai/v1/chat/completions"
+model = "mistral-small-latest"
 
-headers = {
-    "Authorization": f"Bearer {API_KEY}",
-    "Content-Type": "application/json"
-}
+client = Mistral(api_key=api_key)
 
-data = {
-    "model": "mistral-small",
-    "messages": [
-        {"role": "user", "content": "Peux-tu répondre à ce message ?"}
+chat_response = client.chat.complete(
+    model= model,
+    messages = [
+        {
+            "role": "user",
+            "content": "What's the weather today ?",
+        },
     ]
-}
-
-try:
-    response = requests.post(API_URL, headers=headers, json=data)
-    response.raise_for_status()  # Lève une erreur pour les statuts HTTP 4xx/5xx
-
-    # Affichage de la réponse de l'API
-    result = response.json()
-    print("✅ Clé API valide. Réponse de l'IA :")
-    print(result["choices"][0]["message"]["content"])
-
-except requests.exceptions.HTTPError as err:
-    print(f"❌ Erreur HTTP : {err}")
-    print(f"Détails : {response.text}")
-except Exception as e:
-    print(f"❌ Une erreur est survenue : {e}")
+)
+print(chat_response)
