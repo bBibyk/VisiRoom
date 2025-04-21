@@ -3,6 +3,7 @@ import re
 import json
 import webcolors
 from bs4 import BeautifulSoup
+import textstat
 from urllib.parse import urljoin, urlparse
 
 def is_valid_url(url, base_domain):
@@ -31,7 +32,42 @@ def fetch_links_and_content(url, base_domain, links : bool):
     
 
 def text_analysis(soup):
-    pass
+    results = []
+
+    # Extraire et nettoyer le texte de la page
+    text = soup.get_text(separator=' ', strip=True)
+    print(text)
+    print()
+    print()
+    print()
+    text = ' '.join(text.split())
+
+    # Calcul des scores de lisibilité
+    readability_scores = {
+        "flesch_reading_ease": textstat.flesch_reading_ease(text),
+        "flesch_kincaid_grade": textstat.flesch_kincaid_grade(text),
+        "smog_index": textstat.smog_index(text),
+        "automated_readability_index": textstat.automated_readability_index(text),
+        "dale_chall_score": textstat.dale_chall_readability_score(text),
+        "difficult_words": textstat.difficult_words(text),
+        "linsear_write_formula": textstat.linsear_write_formula(text),
+        "gunning_fog": textstat.gunning_fog(text),
+        "text_standard": textstat.text_standard(text)
+    }
+
+    # Score global simplifié
+    global_score = (
+        readability_scores["flesch_reading_ease"]
+        - readability_scores["gunning_fog"]
+        - readability_scores["smog_index"]
+    ) / 3
+
+    results.append({
+        "global_score": round(global_score, 2),
+        "readability_scores": readability_scores
+    })
+
+    return results
 
 def images_analysis(soup):
     errors = []
@@ -65,8 +101,6 @@ def images_analysis(soup):
     
     return errors
 
-def keywords_analysis(soup):
-    pass
 
 def tags_analysis(soup):
     errors = []
@@ -262,10 +296,10 @@ def crawl_website(start_url):
     urls, start_url_content = fetch_links_and_content(start_url, base_domain, links=True)
     if start_url_content is not None:
         result = {start_url : analyze_page(start_url_content)}
-        for url in urls:
-            _, content = fetch_links_and_content(url, base_domain, links=False)
-            if content is not None:
-                result[url] = analyze_page(content)
+        # for url in urls:
+        #     _, content = fetch_links_and_content(url, base_domain, links=False)
+        #     if content is not None:
+        #         result[url] = analyze_page(content)
     
     print(json.dumps(result))
 
