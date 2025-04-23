@@ -284,7 +284,6 @@ def analyze_page(soup):
     result = {}
     result["text"] = text_analysis(soup)
     result["images"] = images_analysis(soup)
-    result["keywords"] = keywords_analysis(soup)
     result["tags"] = tags_analysis(soup)
     result["accessibility"] = accessibility_analysis(soup)
     return result

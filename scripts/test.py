@@ -2,22 +2,26 @@ import requests
 from dotenv import load_dotenv
 import os
 from mistralai import Mistral
+from googlesearch import search
 
-load_dotenv()
+j = search("kung fu a toulouse", num_results=100)
+print(next(j))
 
-api_key = os.getenv("MISTRAL_API_KEY")
+# load_dotenv()
 
-model = "mistral-small-latest"
+# api_key = os.getenv("MISTRAL_API_KEY")
 
-client = Mistral(api_key=api_key)
+# model = "mistral-small-latest"
 
-chat_response = client.chat.complete(
-    model= model,
-    messages = [
-        {
-            "role": "user",
-            "content": "What's the weather today ?",
-        },
-    ]
-)
-print(chat_response)
+# client = Mistral(api_key=api_key)
+
+# chat_response = client.chat.complete(
+#     model= model,
+#     messages = [
+#         {
+#             "role": "user",
+#             "content": "What's the weather today ?",
+#         },
+#     ]
+# )
+# print(chat_response)
