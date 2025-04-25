@@ -4,24 +4,24 @@ import os
 from mistralai import Mistral
 from googlesearch import search
 
-j = search("kung fu a toulouse", num_results=100)
-print(next(j))
+# j = search("kung fu a toulouse", num_results=100)
+# print(next(j))
 
-# load_dotenv()
+load_dotenv()
 
-# api_key = os.getenv("MISTRAL_API_KEY")
+api_key = os.getenv("MISTRAL_API_KEY")
 
-# model = "mistral-small-latest"
+model = "mistral-small-latest"
 
-# client = Mistral(api_key=api_key)
+client = Mistral(api_key=api_key)
 
-# chat_response = client.chat.complete(
-#     model= model,
-#     messages = [
-#         {
-#             "role": "user",
-#             "content": "What's the weather today ?",
-#         },
-#     ]
-# )
-# print(chat_response)
+chat_response = client.chat.complete(
+    model= model,
+    messages = [
+        {
+            "role": "user",
+            "content": "What's the weather today ?",
+        },
+    ]
+)
+print(chat_response.choices[0].message.content)
