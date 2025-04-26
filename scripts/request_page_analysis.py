@@ -101,7 +101,7 @@ def google_search(query, domain):
     referenced_page = None
     
     try :
-        results = search(query, num_results=100)
+        results = search(query, num=100)
 
         for idx, result in enumerate(results, start=1):
             if idx == 1:
@@ -111,7 +111,7 @@ def google_search(query, domain):
                 current_position = idx
                 referenced_page = result
                 break
-
+            
     except Exception:
         pass
 

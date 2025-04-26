@@ -1,27 +1,21 @@
-import requests
-from dotenv import load_dotenv
-import os
-from mistralai import Mistral
 from googlesearch import search
 
-# j = search("kung fu a toulouse", num_results=100)
-# print(next(j))
+def google_search(query, domain):
+    first_result = None
+    current_position = None
+    referenced_page = None
+    
+    results = search(query, num=100)
 
-load_dotenv()
+    for idx, result in enumerate(results, start=1):
+        if idx == 1:
+            first_result = result
 
-api_key = os.getenv("MISTRAL_API_KEY")
+        if domain in result:
+            current_position = idx
+            referenced_page = result
+            break
 
-model = "mistral-small-latest"
+    return first_result, current_position, referenced_page
 
-client = Mistral(api_key=api_key)
-
-chat_response = client.chat.complete(
-    model= model,
-    messages = [
-        {
-            "role": "user",
-            "content": "What's the weather today ?",
-        },
-    ]
-)
-print(chat_response.choices[0].message.content)
+print(google_search("kung fu a toulouse", "www.kfat.fr"))
