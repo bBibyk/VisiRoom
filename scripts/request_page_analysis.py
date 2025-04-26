@@ -63,7 +63,7 @@ Analyse en détail les forces et faiblesses de chaque texte par rapport à cette
 Ensuite, propose des modifications précises et concrètes pour améliorer le contenu de la page cible, de façon à répondre plus pertinemment à la requête, surpassant ainsi la page concurrente.
 Priorise la clarté, la pertinence et la richesse des informations fournies pour optimiser la satisfaction de l'intention de recherche.
 Ton but est de fournir un contenu qui sera classé 1er dans la requête de recherche.
-
+Si au moins l'une des pages est vide, tu ne feras pas la comparaison, mais proposera seuelemnt un contenu pour cibler la requête de recherche et arriver en 1ère place du classement.
 """
 
     client = Mistral(api_key=api_key)
