@@ -1,0 +1,69 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Lilita+One&display=swap');
+
+body {
+    margin: 0;
+    padding: 0;
+    background: linear-gradient(135deg, #fdfdfd, #88fdf3);
+    font-family: 'Roboto', sans-serif;
+    padding-top: 100px;
+}
+
+.dashboard-container {
+    max-width: 1000px;
+    margin: 0 auto;
+    background: #ffffff;
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    font-size: 2.5rem;
+    color: #38b6ff;
+    font-family: 'Lilita One', cursive;
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.analysis-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 1rem;
+}
+
+.analysis-table th {
+    background-color: #41c1ba;
+    color: white;
+    padding: 15px;
+    text-align: left;
+}
+
+.analysis-table td {
+    padding: 15px;
+    border-bottom: 1px solid #ddd;
+}
+
+.score {
+    font-weight: bold;
+    text-align: center;
+}
+
+.score.good {
+    color: green;
+}
+
+.score.medium {
+    color: orange;
+}
+
+.score.low {
+    color: red;
+}
+
+@media (max-width: 768px) {
+    .analysis-table th, .analysis-table td {
+        font-size: 0.9rem;
+        padding: 10px;
+    }
+}
