@@ -6,6 +6,7 @@
     <title>VisiBoost</title>
     <link rel="stylesheet" href="css/home.css">
     <link href="https://fonts.googleapis.com/css2?family=Lilita+One&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
 </head>
 <body>
 
@@ -16,41 +17,53 @@
         .then(response => response.text())
         .then(data => {
             document.getElementById("navbar-container").innerHTML = data;
-
-            // ✅ Charger le CSS après l'ajout de la navbar
             let link = document.createElement("link");
             link.rel = "stylesheet";
-            link.href = "css/navbar.css"; // Vérifie bien le chemin du fichier CSS
+            link.href = "css/navbar.css";
             document.head.appendChild(link);
-        })
-        .catch(error => console.error("Erreur lors du chargement de la navbar :", error));
+        });
 </script>
 
-<div class="home-container">
-    <div class="overlay"></div>
-    <div class="content">
-        <h1>Prêt à Booster votre Référencement ?</h1>
-        <p><span class="highlight">Rentrez le lien de votre site et suivez nos conseilles</span> </p>
-        <div class="search-container">
-            <input type="text" id="siteUrl" placeholder="Adresse de votre site (obligatoire) ...">
-            <button onclick="redirectToLogin()">Lancer l'analyse</button>
-        </div>
+<div class="intro-message">
+    <h1>Prêt à Booster votre Référencement ?</h1>
+    <p><span class="highlight">Rentrez le lien de votre site et suivez nos conseils</span></p>
+</div>
+
+
+<!-- ===== ÉCRAN D'ACCUEIL DIVISÉ ===== -->
+<div class="split-screen">
+    <div class="split left">
+        <h2>Analyse Rapide</h2>
+        <p>Entrez simplement l'URL de votre site pour une analyse immédiate.</p>
+        <input type="text" id="siteUrl" placeholder="Adresse de votre site (obligatoire) ..." />
+        <button onclick="redirectToLogin()">Lancer l'analyse</button>
+    </div>
+
+    <div class="split right">
+        <h2>Analyse Ciblée</h2>
+        <p>Spécifiez une page et une requête cible pour une analyse personnalisée.</p>
+        <form action="analysis.html" method="get" class="target-form">
+            <input type="url" name="page_url" placeholder="URL de la page à analyser" required />
+            <input type="text" name="target_query" placeholder="Requête cible (ex: agence SEO Toulouse)" required />
+            <button type="submit">Lancer l'analyse ciblée</button>
+        </form>
     </div>
 </div>
 
-<!-- Espace Avantages Abonnement -->
+<!-- Section Avantages -->
 <div class="advantages-section">
     <h2>Pourquoi choisir un abonnement VisiBoost ?</h2>
     <ul class="features-list">
-        <li>✔ Analyse illimitée de votre site web</li>
-        <li>✔ Détection des erreurs SEO et recommandations</li>
-        <li>✔ Conseils personnalisés pour booster votre référencement</li>
-        <li>✔ Suivi des performances SEO en temps réel</li>
-        <li>✔ Accès à nos experts pour des analyses approfondies</li>
+        <li> Analyse illimitée de votre site web</li>
+        <li> Détection des erreurs SEO et recommandations</li>
+        <li> Conseils personnalisés pour booster votre référencement</li>
+        <li> Suivi des performances SEO en temps réel</li>
+        <li> Accès à nos experts pour des analyses approfondies</li>
     </ul>
     <button class="subscribe-button" onclick="window.location.href='subscribe.html'">S'abonner</button>
 </div>
 
+<!-- Section Connexion/Inscription -->
 <div class="auth-section">
     <h2>Accédez à votre compte</h2>
     <p>Connectez-vous pour suivre vos analyses ou inscrivez-vous gratuitement !</p>
@@ -63,13 +76,12 @@
 <script>
     function redirectToLogin() {
         if (localStorage.getItem("userLoggedIn") === "true") {
-            window.location.href = "analysis.html"; // ✅ Aller directement à l'analyse
+            window.location.href = "analysis.html";
         } else {
-            window.location.href = "login.html"; // ✅ Sinon, aller à la connexion
+            window.location.href = "login.html";
         }
     }
 </script>
-
 
 <script src="js/script.js"></script>
 </body>
