@@ -10,7 +10,7 @@ def is_valid_url(url, base_domain):
     parsed_url = urlparse(url)
     return parsed_url.scheme in ("http", "https") and parsed_url.netloc == base_domain
 
-def fetch_links_and_content(url, base_domain, links : bool):
+def fetch_links_and_content(url, base_domain, links : bool, t=0):
     try:
         urls_found = set()
         page_content = ""
@@ -28,7 +28,10 @@ def fetch_links_and_content(url, base_domain, links : bool):
         return urls_found, soup
     # Ignorer les erreurs de connexion ou de réponse
     except Exception:
-        return None, None
+        if t<5:
+            return fetch_links_and_content(url, base_domain, links, t=t+1)
+        else :
+            return None, None
     
 
 def text_analysis(soup):
@@ -36,10 +39,6 @@ def text_analysis(soup):
 
     # Extraire et nettoyer le texte de la page
     text = soup.get_text(separator=' ', strip=True)
-    print(text)
-    print()
-    print()
-    print()
     text = ' '.join(text.split())
 
     # Calcul des scores de lisibilité
@@ -299,7 +298,8 @@ def crawl_website(start_url):
         #     _, content = fetch_links_and_content(url, base_domain, links=False)
         #     if content is not None:
         #         result[url] = analyze_page(content)
-    
+    else:
+        result = {"error" : "unavailable"}
     print(json.dumps(result))
 
 if __name__ == '__main__':

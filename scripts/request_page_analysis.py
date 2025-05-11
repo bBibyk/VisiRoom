@@ -58,7 +58,7 @@ def get_advises(reference_content, current_content, query):
         model = "mistral-small-latest"
 
         prompt =f"""
-    Tu est un expert en SEO et copyrighting.
+    Tu est un expert en SEO et copyrighting. Parle à la 1ère personne du pluriel (nous).
     Compare deux textes extraits de contenus de sites web dans le contexte d'une requête de recherche web.
     Analyse en détail les forces et faiblesses de chaque texte par rapport à cette requête, en mettant en évidence quels aspects sont mieux traités par chaque contenu.
     Ensuite, propose des modifications précises et concrètes pour améliorer le contenu de la page cible, de façon à répondre plus pertinemment à la requête, surpassant ainsi la page concurrente.
@@ -77,11 +77,11 @@ def get_advises(reference_content, current_content, query):
                 },
                 {
                     "role": "user",
-                    "content": f"Voici le contenu de la page cible : '{current_content}'",
+                    "content": f"Voici le contenu de la page cible (ignore les éléments HTML, comme ci s'était du texte pur) : '{current_content}'",
                 },
                 {
                     "role": "user",
-                    "content": f"Voici le contenu de la page concurrente : '{reference_content}'",
+                    "content": f"Voici le contenu de la page concurrente (ignore les éléments HTML, comme ci s'était du texte pur) : '{reference_content}'",
                 },
                 {
                     "role": "user",
