@@ -346,3 +346,11 @@ button:hover {
     font-weight: bold;
     color: #7cc6d3;
 }
+
+.split input[type="text"],
+.split input[type="url"] {
+    width: 90%;
+    margin-right: auto; /* Évite que l'input colle le bord droit */
+    margin-left: auto;
+    display: block;
+}
