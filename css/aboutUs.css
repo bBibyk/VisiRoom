@@ -98,6 +98,7 @@ ul {
 }
 
 .subscribe-button {
+    text-decoration: none;
     background-color: #41c1ba;
     color: white;
     padding: 15px 30px;

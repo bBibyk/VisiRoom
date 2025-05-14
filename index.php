@@ -1,6 +1,7 @@
 <?php
 
 require_once('controller/AnalysisController.php');
+require_once('controller/ContactController.php');
 require_once('controller/InformationController.php');
 require_once('controller/UserController.php');
 

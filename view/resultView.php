@@ -2,8 +2,9 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
+    <base href='/Visiboost/Visiboost/'>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Analyse SEO - VisiBoost</title>
+    <title>Analyse SEO - VisiRoom</title>
     <link rel="stylesheet" href="css/header.css">
     <link rel="stylesheet" href="css/result.css">
     <link href="https://fonts.googleapis.com/css2?family=Lilita+One&display=swap" rel="stylesheet">
@@ -17,8 +18,8 @@
     <h1>Retour des Analyses</h1>
 
     <div class="analysis-section">
-        <h2>1 - HTML :</h2>
-        <?php echo '<p>'.$resultHtml.'</p>' ?>
+        <h2>Analyse</h2>
+        <?php echo '<p>'.$result.'</p>' ?>
     </div>
 
 

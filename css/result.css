@@ -15,6 +15,17 @@ body {
     min-height: 100vh;
 }
 
+table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 20px auto;
+}
+th, td {
+    border: 1px solid black; /* Bordure autour des cellules */
+    padding: 8px;
+    text-align: center;
+}
+
 .analysis-container {
     background-color: #ffffff;
     padding: 40px;

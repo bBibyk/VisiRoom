@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>À Propos de Nous - VisiBoost</title>
+    <title>À Propos de Nous - VisiRoom</title>
     <link rel="stylesheet" href="css/header.css">
     <link rel="stylesheet" href="css/aboutUs.css">
     <link href="https://fonts.googleapis.com/css2?family=Lilita+One&display=swap" rel="stylesheet">
@@ -16,7 +16,7 @@
 
 <div class="about-container">
     <h1>Qui Sommes-Nous ?</h1>
-    <p>Chez <strong>VisiBoost</strong>, nous sommes passionnés par l'optimisation de la visibilité en ligne des petites entreprises, indépendants et associations. Notre mission est de rendre le <strong>SEO accessible à tous</strong>, avec des solutions simples et efficaces adaptées à vos besoins.</p>
+    <p>Chez <strong>VisiRoom</strong>, nous sommes passionnés par l'optimisation de la visibilité en ligne des petites entreprises, indépendants et associations. Notre mission est de rendre le <strong>SEO accessible à tous</strong>, avec des solutions simples et efficaces adaptées à vos besoins.</p>
 
     <section class="mission">
         <h2>Notre Mission</h2>
@@ -37,7 +37,7 @@
         <p>Une équipe d'experts passionnés par le web, le marketing digital et le développement, dédiée à votre succès en ligne.</p>
     </section>
 
-    <button class="subscribe-button" onclick="window.location.href='subscribe.html'">Rejoignez-nous</button>
+    <a class="subscribe-button" href="https://www.wiseed.com/">Rejoignez-nous</a>
 </div>
 
 </body>

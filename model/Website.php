@@ -16,7 +16,7 @@ class Website {
         return $this->id;
     }
 
-    public function getDomainname(): string {
+    public function getDomainName(): string {
         return $this->domainname;
     }
 
@@ -29,7 +29,7 @@ class Website {
         $this->id = $id;
     }
 
-    public function setDomainname(string $domainname): void {
+    public function setDomainName(string $domainname): void {
         $this->domainname = $domainname;
     }
 

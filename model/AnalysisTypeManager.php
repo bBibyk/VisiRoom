@@ -30,6 +30,17 @@ class AnalysisTypeManager {
         return $data ? new AnalysisType($data['id'], $data['label']) : null;
     }
 
+    public static function getByLabel(string $label): ?AnalysisType {
+        self::checkConnection();
+
+        $stmt = self::$cnx->prepare("SELECT * FROM analysisType WHERE label = :label");
+        $stmt->bindValue(':label', $label, PDO::PARAM_STR);
+        $stmt->execute();
+        $data = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        return $data ? new AnalysisType($data['id'], $data['label']) : null;
+    }
+
     public static function add(AnalysisType $analysisType): bool {
         self::checkConnection();
 

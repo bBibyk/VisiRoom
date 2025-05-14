@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>S'abonner - VisiBoost</title>
+    <base href='/Visiboost/Visiboost/'>
+    <title>S'abonner - VisiRoom</title>
     <link rel="stylesheet" href="css/header.css">
     <link rel="stylesheet" href="css/subscribe.css">
     <link href="https://fonts.googleapis.com/css2?family=Lilita+One&display=swap" rel="stylesheet">
@@ -80,9 +81,9 @@
         </tr>
         <tr>
             <td></td>
-            <td><button onclick="redirectToPayment('free')">S'abonner</button></td>
-            <td><button onclick="redirectToPayment('standard')">S'abonner</button></td>
-            <td><button onclick="redirectToPayment('premium')">S'abonner</button></td>
+            <td><button onclick="window.location.href='updateSub/F'">S'abonner</button></td>
+            <td><button onclick="window.location.href='updateSub/S'">S'abonner</button></td>
+            <td><button onclick="window.location.href='updateSub/P'">S'abonner</button></td>
         </tr>
         </tbody>
     </table>
