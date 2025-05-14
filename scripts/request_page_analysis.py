@@ -53,42 +53,45 @@ def advise_content(link, query):
     return response
 
 def get_advises(reference_content, current_content, query):
-    api_key = os.getenv("MISTRAL_API_KEY")
-    model = "mistral-large-latest"
+    try:
+        api_key = os.getenv("MISTRAL_API_KEY")
+        model = "mistral-small-latest"
 
-    prompt =f"""
-Tu est un expert en SEO et copyrighting.
-Compare deux textes extraits de contenus de sites web dans le contexte d'une requête de recherche web.
-Analyse en détail les forces et faiblesses de chaque texte par rapport à cette requête, en mettant en évidence quels aspects sont mieux traités par chaque contenu.
-Ensuite, propose des modifications précises et concrètes pour améliorer le contenu de la page cible, de façon à répondre plus pertinemment à la requête, surpassant ainsi la page concurrente.
-Priorise la clarté, la pertinence et la richesse des informations fournies pour optimiser la satisfaction de l'intention de recherche.
-Ton but est de fournir un contenu qui sera classé 1er dans la requête de recherche.
-Si au moins l'une des pages est vide, tu ne feras pas la comparaison, mais proposera seuelemnt un contenu pour cibler la requête de recherche et arriver en 1ère place du classement.
-"""
+        prompt =f"""
+    Tu est un expert en SEO et copyrighting. Parle à la 1ère personne du pluriel (nous).
+    Compare deux textes extraits de contenus de sites web dans le contexte d'une requête de recherche web.
+    Analyse en détail les forces et faiblesses de chaque texte par rapport à cette requête, en mettant en évidence quels aspects sont mieux traités par chaque contenu.
+    Ensuite, propose des modifications précises et concrètes pour améliorer le contenu de la page cible, de façon à répondre plus pertinemment à la requête, surpassant ainsi la page concurrente.
+    Priorise la clarté, la pertinence et la richesse des informations fournies pour optimiser la satisfaction de l'intention de recherche.
+    Ton but est de fournir un contenu qui sera classé 1er dans la requête de recherche.
+    Si au moins l'une des pages est vide, tu ne feras pas la comparaison, mais proposera seuelemnt un contenu pour cibler la requête de recherche et arriver en 1ère place du classement.
+    """
 
-    client = Mistral(api_key=api_key)
-    chat_response = client.chat.complete(
-        model= model,
-        messages = [
-            {
-                "role": "system",
-                "content": prompt,
-            },
-            {
-                "role": "user",
-                "content": f"Voici le contenu de la page cible : '{current_content}'",
-            },
-            {
-                "role": "user",
-                "content": f"Voici le contenu de la page concurrente : '{reference_content}'",
-            },
-            {
-                "role": "user",
-                "content": f"Voici la requête de recherche : '{query}'",
-            },
-        ]
-    )
-    return chat_response.choices[0].message.content
+        client = Mistral(api_key=api_key)
+        chat_response = client.chat.complete(
+            model= model,
+            messages = [
+                {
+                    "role": "system",
+                    "content": prompt,
+                },
+                {
+                    "role": "user",
+                    "content": f"Voici le contenu de la page cible (ignore les éléments HTML, comme ci s'était du texte pur) : '{current_content}'",
+                },
+                {
+                    "role": "user",
+                    "content": f"Voici le contenu de la page concurrente (ignore les éléments HTML, comme ci s'était du texte pur) : '{reference_content}'",
+                },
+                {
+                    "role": "user",
+                    "content": f"Voici la requête de recherche : '{query}'",
+                },
+            ]
+        )
+        return chat_response.choices[0].message.content
+    except :
+        return "error:unavailable"
 
 def extract_domain_base(url):
     parsed = urlparse(url)
