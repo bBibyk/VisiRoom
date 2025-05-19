@@ -8,6 +8,8 @@ require_once 'model/UserManager.php';
 require_once 'model/User.php';
 require_once 'model/WebsiteManager.php';
 require_once 'model/Website.php';
+require_once 'controller/Parsedown.php';
+
 
 class AnalysisController{
     public static function analysis(){
@@ -71,27 +73,23 @@ class AnalysisController{
                     } else {
                         $data = null;
                     }
-        
-                    // Gestion des erreurs
-                    if (json_last_error() !== JSON_ERROR_NONE || !$data) {
-                        echo "<div style='color: red;'><strong>Erreur JSON :</strong> " . json_last_error_msg() . "</div>";
-                        echo "<pre>Sortie brute du script :\n$output</pre>";
-                        exit;
+                    
+                    if(!isset($data['error'])){
+                        $result = AnalysisController::renderJson($data);
+                        $analysis = new Analysis("", $website, AnalysisTypeManager::getByLabel('html'), $result);
+                
+                        AnalysisManager::add($analysis);
+                        require_once 'view/resultView.php';
+                    }else{
+                        if($data['error'] == 'unavailable'){
+                           $message = 'Les sites web développer avec le framework Angular ne peuvent pas être analysés. Il est recommandé d\'utiliser une autre architecture pour un meilleur référencement SEO.';
+                            require_once 'view/errorView.php';
+                        }else{
+                            $message = "Erreur 500 : données indisponnibles.";
+                            require_once 'view/errorView.php';
+                        }
                     }
 
-                    if(isset($data['error'])){
-                        $message = $data['error'];
-                        require_once 'view/errorView.php';
-                    }
-        
-                    // Si tout va bien, affiche
-                    $result = AnalysisController::renderJson($data);
-        
-                    $analysis = new Analysis("", $website, AnalysisTypeManager::getByLabel('html'), $result);
-        
-                    AnalysisManager::add($analysis);
-                    
-                    require_once 'view/resultView.php';
                 }else{
                     $message = "Erreur 500 : données indisponnibles.";
                     require_once 'view/errorView.php';
@@ -114,20 +112,20 @@ class AnalysisController{
         $user = UserManager::getByEmail($_SESSION['email']);
         $website;
         $analysis;
-
-        //Création du website
-        if(WebsiteManager::existsDomainName($_POST['domainName'])){
-            $website = WebsiteManager::getByDomainName($_POST['domainName']);
-        }else{
-            $website = new Website(0, $_POST['domainName'], $user);
-            WebsiteManager::add($website);
-        }
-
-        $url = $_POST["domainName"];
         $sentence = $_POST["sentence"];
         $result;
 
         if(isset($_POST["domainName"]) && !empty($_POST["domainName"])){
+            $url = AnalysisController::completeDomainName($_POST['domainName']);
+
+            //Création du website
+            if(WebsiteManager::existsDomainName($url)){
+                $website = WebsiteManager::getByDomainName($url);
+            }else{
+                $website = new Website(0, $url, $user);
+                $website = WebsiteManager::add($website);
+            }
+
             if(isset($_POST["sentence"]) && !empty($_POST["sentence"])){
                 if(AnalysisController::domaineExiste($url)){
                     //C:\wamp64\www\Visiboost\env\Scripts\python.exe scripts/request_page_analysis.py "https://www.exemple.com" "exemple"
@@ -146,26 +144,19 @@ class AnalysisController{
                         } else {
                             $data = null;
                         }
-            
-                        // Gestion des erreurs
-                        if (json_last_error() !== JSON_ERROR_NONE || !$data) {
-                            echo "<div style='color: red;'><strong>Erreur JSON :</strong> " . json_last_error_msg() . "</div>";
-                            echo "<pre>Sortie brute du script :\n$output</pre>";
-                            exit;
-                        }
-
-                        if(isset($data['erreur'])){
-                            $message = $data['erreur'];
-                            require_once 'view/errorView.php';
-                        }else{
+                    
                             // Si tout va bien, affiche
                             $result = AnalysisController::renderJsonSearch($data);
+
+                            if($result != 'error:unavailable'){
+                                $analysis = new Analysis("", $website, AnalysisTypeManager::getByLabel('search'), $result);
                 
-                            $analysis = new Analysis("", $website, AnalysisTypeManager::getByLabel('search'), $result);
-                
-                            AnalysisManager::add($analysis);
-                            require_once 'view/resultView.php';
-                        }
+                                AnalysisManager::add($analysis);
+                                require_once 'view/resultView.php';
+                            }else{
+                                $message = 'Données indisponible';
+                                require_once 'view/errorView.php';
+                            }
                     }else{
                         $message = "Erreur 500 : données indisponnibles.";
                         require_once 'view/errorView.php';
@@ -199,20 +190,39 @@ class AnalysisController{
     }
 
 
-    static function domaineExiste($url) {
-        // Retire le protocole (http:// ou https://) s'il existe
+    static function domaineExiste(string $url): bool {
+        // Extraire le host
         $parse = parse_url($url);
-        if (!isset($parse['host'])) {
-            $domaine = $parse['path']; // Si l'URL est sans protocole
-        } else {
-            $domaine = $parse['host']; // Si l'URL a un protocole
+        $host = $parse['host'] ?? $parse['path'];
+
+        // Si vide, on ne peut rien faire
+        if (empty($host)) {
+            return false;
         }
-    
-        // Vérifie le DNS
-        if (checkdnsrr($domaine, 'A') || checkdnsrr($domaine, 'AAAA') || checkdnsrr($domaine, 'CNAME')) {
-            return true; // Le domaine existe
+
+        // 1. Test direct
+        if (checkdnsrr($host, 'A') || checkdnsrr($host, 'AAAA') || checkdnsrr($host, 'CNAME')) {
+            return true;
         }
-        return false; // Le domaine n'existe pas
+
+        // 2. Remonter les sous-domaines (eu.shop.battle.net → shop.battle.net → battle.net)
+        $parts = explode('.', $host);
+        while (count($parts) > 2) {
+            array_shift($parts); // retire le sous-domaine le plus à gauche
+            $testHost = implode('.', $parts);
+
+            if (checkdnsrr($testHost, 'A') || checkdnsrr($testHost, 'AAAA') || checkdnsrr($testHost, 'CNAME')) {
+                return true;
+            }
+        }
+
+        // 3. Fallback optionnel (résolution DNS par IP)
+        $resolved = gethostbyname($host);
+        if ($resolved !== $host) {
+            return true;
+        }
+
+        return false;
     }
     
     private static function displayJson(array|string $json): string {
@@ -290,29 +300,12 @@ class AnalysisController{
     }
 
     private static function renderJsonSearch(array $json): string {
-        $html = '';
-        $changes = htmlspecialchars($json['advise']['changes']);
+        $parsedown = new Parsedown();
 
-        $changes = nl2br($changes); // Gestion des retours à la ligne simples
-        $changes = str_replace('**', '', $changes); // Supprimer les **
-        $changes = preg_replace('/^####\s*/m', '', $changes); // Supprimer les #### au début des lignes
-        $changes = preg_replace('/^###\s*/m', '', $changes); // Supprimer les ### au début des lignes
-        $changes = str_replace('---', '-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------', $changes);
+        $markdown = $json['advise']['changes'];
 
-        if (isset($json['erreur'])) {
-            // Afficher une erreur en rouge
-            $html .= "<p style='color:red;'><strong>Erreur :</strong> " . htmlspecialchars($json['erreur']) . "</p>";
-        } elseif (isset($json['advise'])) {
-            // Afficher le conseil
-            $html .= "<h2>Conseil</h2>";
-            $html .= "<p>".$changes. "</p>";
-        } else {
-            // Cas inattendu
-            $html .= "<p><em>Aucun résultat disponible.</em></p>";
-        }
-    
+        $html = $parsedown->text($markdown);
+
         return $html;
-    }
-    
-    
+    }  
 }

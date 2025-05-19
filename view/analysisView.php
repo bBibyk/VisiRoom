@@ -35,7 +35,7 @@
         <h2>Analyse Ciblée</h2>
         <p>Spécifiez une page et une requête cible pour une analyse personnalisée.</p>
         <form action="/Visiboost/Visiboost/addAnalysisSearch" method="POST" class="target-form">
-            <input type="url" name="domainName" placeholder="URL de la page à analyser" required />
+            <input type="text" name="domainName" placeholder="URL de la page à analyser" required />
             <input type="text" name="sentence" placeholder="Requête cible (ex: agence SEO Toulouse)" required />
             <button id="searchButton" type="submit">Lancer l'analyse ciblée</button>
         </form>

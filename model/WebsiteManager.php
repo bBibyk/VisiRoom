@@ -67,18 +67,6 @@ class WebsiteManager {
     return new Website($lastInsertId, $website->getDomainName(), $website->getUser());
 }
 
-
-    public static function update(Website $website): bool {
-        self::checkConnection();
-
-        $stmt = self::$cnx->prepare("UPDATE website SET domainname = :domainname, idUser = :idUser WHERE id = :id");
-        return $stmt->execute([
-            ':id' => $website->getId(),
-            ':domainname' => $website->getDomainname(),
-            ':idUser' => $website->getUser()->getId()
-        ]);
-    }
-
     public static function delete(int $id): bool {
         self::checkConnection();
 

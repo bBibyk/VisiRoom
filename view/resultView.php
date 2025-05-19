@@ -23,14 +23,17 @@
     </div>
 
 
-    <div class="analysis-section">
-        <h2>3 - Modifications à faire :</h2>
-        <ul>
-            <li>Corriger les balises mal structurées.</li>
-            <li>Optimiser les images pour un chargement plus rapide.</li>
-            <li>Améliorer l’accessibilité et le référencement.</li>
-        </ul>
-    </div>
+    <?php if($analysis->getAnalysisType()->getLabel() == 'html'){
+            echo '<div class="analysis-section">
+                    <h2>3 - Modifications à faire :</h2>
+                    <ul>
+                        <li>Corriger les balises mal structurées.</li>
+                        <li>Optimiser les images pour un chargement plus rapide.</li>
+                        <li>Améliorer l’accessibilité et le référencement.</li>
+                    </ul>
+                </div>';
+        }
+    ?>
 
     <div class="advantages-section">
         <h2>Avantages de l'Abonnement</h2>
