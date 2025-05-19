@@ -8,39 +8,54 @@ from mistralai import Mistral
 import requests
 from bs4 import BeautifulSoup
 import re
+import time
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
+import html2text
 
-def extract_semantic_text(url):
-    try:
-        response = requests.get(url, timeout=10)
-        response.raise_for_status()
-    except requests.RequestException as e:
-        return f"Error fetching URL: {e}"
+def extract_semantic_text(url, t=0):
+    def is_csr(content):
+        soup = BeautifulSoup(content, 'html.parser')
+        body = soup.body
+        return not body or len(body.get_text(strip=True)) < 50
 
-    soup = BeautifulSoup(response.text, 'html.parser')
+    def get_soup_with_fallback(url, t=0):
+        try:
+            response = requests.get(url, timeout=10)
+            response.raise_for_status()
+            if is_csr(response.text):
+                raise ValueError("Likely a CSR page")
+            return BeautifulSoup(response.text, 'html.parser')
+        except Exception:
+            if t < 3:
+                try:
+                    options = Options()
+                    options.add_argument("--headless")
+                    options.add_argument("--disable-gpu")
+                    options.add_argument("--no-sandbox")
+                    options.add_argument("--enable-unsafe-swiftshader")
+                    options.add_experimental_option("excludeSwitches", ["enable-logging"])
+                    
+                    driver = webdriver.Chrome(options=options)
+                    driver.set_page_load_timeout(10)
+                    driver.get(url)
+                    time.sleep(3)
+                    page_source = driver.page_source
+                    driver.quit()
+                    return BeautifulSoup(page_source, 'html.parser')
+                except Exception:
+                    return None
+            else:
+                return None
 
-    # Remove unwanted tags
-    for tag in soup(['script', 'style', 'header', 'footer', 'nav', 'aside', 'form']):
-        tag.decompose()
+    soup = get_soup_with_fallback(url, t)
+    if soup is None:
+        return f"No content extracted"
 
-    # Remove elements likely to be links, emails, numbers, titles
-    text_elements = soup.find_all(string=True)
-    clean_texts = []
-
-    for text in text_elements:
-        stripped = text.strip()
-        if not stripped:
-            continue
-        if any(keyword in text.lower() for keyword in ["@","mailto:", "http", "www"]):
-            continue
-        if re.search(r'\d{2,}', text):  # Filter out numbers/dates/phone numbers
-            continue
-        if re.match(r'^[A-Z\s]{5,}$', stripped):  # Avoid long uppercase headings
-            continue
-        if len(stripped.split()) < 4:  # Avoid tiny fragments
-            continue
-
-        clean_texts.append(stripped)
-    return "\n".join(clean_texts)
+    handler = html2text.HTML2Text()
+    handler.ignore_links = True
+    handler.ignore_images = True
+    return handler.handle(str(soup))
 
 
 def advise_content(link, query):
@@ -121,17 +136,8 @@ def google_search(query, domain):
     return first_result, current_position, referenced_page
 
 def is_valid_url(url):
-    try:
-        result = urlparse(url)
-        if not all([result.scheme, result.netloc]):
-            return False
-
-        # Tente de faire une requête GET pour vérifier l'accessibilité
-        response = requests.get(url, timeout=5)
-        return response.status_code == 200 and response.text.strip() != ""
-
-    except Exception:
-        return False
+    parsed_url = urlparse(url)
+    return parsed_url.scheme in ("http", "https") # TODO
 
 
 def main(link, phrase):
