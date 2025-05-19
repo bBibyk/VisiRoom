@@ -9,6 +9,7 @@ import requests
 from bs4 import BeautifulSoup
 import re
 import time
+import validators
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 import html2text
@@ -104,9 +105,9 @@ def get_advises(reference_content, current_content, query):
                 },
             ]
         )
-        return chat_response.choices[0].message.content
+        return json.dumps({"advise": chat_response.choices[0].message.content})
     except :
-        return "error:unavailable"
+        return json.dumps({"error:unavailable"})
 
 def extract_domain_base(url):
     parsed = urlparse(url)
@@ -135,19 +136,14 @@ def google_search(query, domain):
 
     return first_result, current_position, referenced_page
 
-def is_valid_url(url):
-    parsed_url = urlparse(url)
-    return parsed_url.scheme in ("http", "https") # TODO
-
-
 def main(link, phrase):
-    if not is_valid_url(link):
+    if not validators.url(link):
         return json.dumps({"erreur": "lien"})
     if (not phrase.strip()) or (len(phrase)>100):
         return json.dumps({"erreur": "phrase"})
     
     result = advise_content(link, phrase)
-    return json.dumps({"advise": result})
+    return result
 
 if __name__ == "__main__":
     if len(sys.argv) != 3:

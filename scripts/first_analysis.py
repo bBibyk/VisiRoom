@@ -1,4 +1,5 @@
 import requests
+import sys
 import re
 import json
 import webcolors
@@ -8,12 +9,12 @@ from urllib.parse import urljoin, urlparse
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 import time
+import validators
 
 def fetch_links_and_content(url, base_domain, t=0):
     def is_csr(content):
         soup = BeautifulSoup(content, 'html.parser')
         body = soup.body
-        # If there's little or no content in <body>, assume CSR
         return not body or len(body.get_text(strip=True)) < 50
 
     try:
@@ -30,7 +31,6 @@ def fetch_links_and_content(url, base_domain, t=0):
     except Exception:
         if t < 5:
             try:
-                # Set up headless browser
                 options = Options()
                 options.add_argument("--headless")
                 options.add_argument("--disable-gpu")
@@ -40,7 +40,7 @@ def fetch_links_and_content(url, base_domain, t=0):
                 driver = webdriver.Chrome(options=options)
                 driver.set_page_load_timeout(10)
                 driver.get(url)
-                time.sleep(3)  # Wait for JS to load (can be fine-tuned)
+                time.sleep(3)
 
                 page_source = driver.page_source
                 driver.quit()
@@ -309,25 +309,24 @@ def analyze_page(soup):
     return result
 
 def crawl_website(start_url):
-    parsed_start = urlparse(start_url)
-    base_domain = parsed_start.netloc
-
-    type, start_url_content = fetch_links_and_content(start_url, base_domain)
-    if start_url_content is not None:
-        result = {start_url : analyze_page(start_url_content),
-                  "type" : type}
+    if not validators.url(link):
+        print(json.dumps({"erreur": "lien"}))
     else:
-        result = {"error" : "unavailable"}
-    print(json.dumps(result))
+        parsed_start = urlparse(start_url)
+        base_domain = parsed_start.netloc
 
-if __name__ == '__main__':
-    import sys
+        type, start_url_content = fetch_links_and_content(start_url, base_domain)
+        if start_url_content is not None:
+            result = {start_url : analyze_page(start_url_content),
+                    "type" : type}
+        else:
+            result = {"error" : "unavailable"}
+        print(json.dumps(result))
+
+
+if __name__ == "__main__":
     if len(sys.argv) != 2:
-        sys.exit(1)
-    
-    start_url = sys.argv[1]
-
-    # try:
-    crawl_website(start_url)
-    # except Exception:
-    #     print({})
+        print(json.dumps({"erreur": "arguments"}))
+    else:
+        link = sys.argv[1]
+        crawl_website(link)
