@@ -97,6 +97,10 @@ ul {
     padding-left: 20px;
 }
 
+a{
+    display: inline-block;
+}
+
 .subscribe-button {
     text-decoration: none;
     background-color: #41c1ba;

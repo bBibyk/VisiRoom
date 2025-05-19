@@ -37,6 +37,11 @@
         <p>Une équipe d'experts passionnés par le web, le marketing digital et le développement, dédiée à votre succès en ligne.</p>
     </section>
 
+    <section>
+        <h2>Notre référentiel de SEO</h2>
+        <a href="pdf/LivretDeConseils.pdf">Livret de conseil SEO</a>
+    </section>
+
     <a class="subscribe-button" href="https://www.wiseed.com/">Rejoignez-nous</a>
 </div>
 
