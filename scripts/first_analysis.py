@@ -27,7 +27,8 @@ def fetch_links_and_content(url, base_domain, t=0):
         
         soup = BeautifulSoup(page_content, 'html.parser')
         return "SSR", soup
-
+    except requests.HTTPError :
+        return None, None
     except Exception:
         if t < 5:
             try:

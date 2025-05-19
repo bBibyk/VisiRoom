@@ -27,6 +27,8 @@ def extract_semantic_text(url, t=0):
             if is_csr(response.text):
                 raise ValueError("Likely a CSR page")
             return BeautifulSoup(response.text, 'html.parser')
+        except requests.HTTPError :
+            return None
         except Exception:
             if t < 3:
                 try:
