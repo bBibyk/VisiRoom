@@ -155,7 +155,9 @@ class AnalysisController{
                         } else {
                             $data = null;
                         }
-                    
+
+                        var_dump($data);
+
                             // Si tout va bien, affiche
                             $result = AnalysisController::renderJsonSearch($data);
 
@@ -315,9 +317,10 @@ class AnalysisController{
     }
 
     private static function renderJsonSearch(array $json): string {
+
         $parsedown = new Parsedown();
 
-        $markdown = $json['advise']['changes'];
+        $markdown = $json['changes'];
 
         $html = $parsedown->text($markdown);
 

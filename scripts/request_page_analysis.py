@@ -121,7 +121,7 @@ def urls_are_equal(url1, url2):
 
 def google_search(query, target):
     first_result = None
-    current_position = None
+    current_position = 0
     referenced_page = None
     
     try :
@@ -137,7 +137,7 @@ def google_search(query, target):
     except Exception:
         pass
 
-    return first_result, current_position, referenced_page
+    return str(first_result), current_position, str(referenced_page)
 
 def main(link, phrase):
     if not validators.url(link):
@@ -146,7 +146,7 @@ def main(link, phrase):
         return json.dumps({"erreur": "phrase"})
     
     result = advise_content(link, phrase)
-    return result
+    return json.dumps(result)
 
 if __name__ == "__main__":
     if len(sys.argv) != 3:
