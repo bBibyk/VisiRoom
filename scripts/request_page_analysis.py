@@ -63,7 +63,7 @@ def extract_semantic_text(url, t=0):
 
 def advise_content(link, query):
     response = {}
-    first_result, current_position, referenced_page = google_search(query, extract_domain_base(link))
+    first_result, current_position, referenced_page = google_search(query, link)
     response["current_position"] = current_position
     response["concurent"] = first_result
     response["referenced_page"] = referenced_page
@@ -111,24 +111,25 @@ def get_advises(reference_content, current_content, query):
     except :
         return json.dumps({"error:unavailable"})
 
-def extract_domain_base(url):
+def normalize_url(url):
     parsed = urlparse(url)
-    base = f"{parsed.scheme}://{parsed.netloc}"
-    return base
+    domain = parsed.netloc.lower().replace('www.', '')
+    return domain
 
-def google_search(query, domain):
+def urls_are_equal(url1, url2):
+    return normalize_url(url1) == normalize_url(url2)
+
+def google_search(query, target):
     first_result = None
     current_position = None
     referenced_page = None
     
     try :
-        results = search(query)
-
+        results = search(query, num_results=100)
         for idx, result in enumerate(results, start=1):
             if idx == 1:
                 first_result = result
-
-            if domain in result:
+            if (current_position is None) and urls_are_equal(target, result):
                 current_position = idx
                 referenced_page = result
                 break
