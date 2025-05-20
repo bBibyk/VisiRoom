@@ -61,6 +61,7 @@ class AnalysisController{
     
                 $scriptPathHtml = "scripts/first_analysis.py";
                 $command = "C:/wamp64/www/Visiboost/env/Scripts/python.exe " . $scriptPathHtml . " " . $url . " 2>&1";
+
                 //$command = "C:/wamp64/www/Visiboost/env/Scripts/python.exe " . $scriptPathHtml . " 1 2";
                 $output = shell_exec($command);
     
@@ -75,21 +76,25 @@ class AnalysisController{
                     }
                     
                     if(!isset($data['error'])){
-                        $result = AnalysisController::renderJson($data);
-                        $analysis = new Analysis("", $website, AnalysisTypeManager::getByLabel('html'), $result);
-                
-                        AnalysisManager::add($analysis);
-                        require_once 'view/resultView.php';
+                        if($data['type'] == 'SSR'){
+                            $result = AnalysisController::renderJson($data);
+                            $analysis = new Analysis("", $website, AnalysisTypeManager::getByLabel('html'), $result);
+                    
+                            AnalysisManager::add($analysis);
+                            require_once 'view/resultView.php';
+                        }elseif($data['type'] == 'CSR'){
+                            $message = 'Les sites web développé avec le framework Angular ne peuvent pas être analysés. Il est recommandé d\'utiliser une autre architecture pour un meilleur référencement SEO.';
+                            require_once 'view/errorView.php'; 
+                        }
                     }else{
                         if($data['error'] == 'unavailable'){
-                           $message = 'Les sites web développer avec le framework Angular ne peuvent pas être analysés. Il est recommandé d\'utiliser une autre architecture pour un meilleur référencement SEO.';
-                            require_once 'view/errorView.php';
+                            $message = 'Chargement du site impossible.';
+                            require_once 'view/errorView.php';                        
                         }else{
                             $message = "Erreur 500 : données indisponnibles.";
                             require_once 'view/errorView.php';
                         }
                     }
-
                 }else{
                     $message = "Erreur 500 : données indisponnibles.";
                     require_once 'view/errorView.php';
@@ -133,10 +138,16 @@ class AnalysisController{
         
                     $scriptPath = "scripts/request_page_analysis.py";
                     $command = 'C:/wamp64/www/Visiboost/env/Scripts/python.exe scripts/request_page_analysis.py "'.$url.'" "'.$sentence.'"';
+                    
+                    echo $command;
+
                     $output = shell_exec($command);
+
+                    var_dump($output);
         
                     if($output != null){
                         // On tente d'extraire du JSON (en cherchant la première accolade ouvrante)
+                        $data;
                         $start = strpos($output, '{');
                         if ($start !== false) {
                             $jsonString = substr($output, $start);
@@ -181,10 +192,10 @@ class AnalysisController{
         }
 
         // Ajouter www. si le domaine ne l’a pas déjà
-        $parsed = parse_url($domainName);
+        /*$parsed = parse_url($domainName);
         if (isset($parsed['host']) && !preg_match('/^www\./', $parsed['host'])) {
             $domainName = str_replace($parsed['host'], 'www.' . $parsed['host'], $domainName);
-        }
+        }*/
 
         return $domainName;
     }
@@ -241,8 +252,9 @@ class AnalysisController{
     
         foreach ($json as $url => $sections) {
             $html .= "<h2>Résultats pour : <em>$url</em></h2>";
-    
-            foreach ($sections as $sectionName => $sectionData) {
+
+            if(is_array($sections)){
+                foreach ($sections as $sectionName => $sectionData) {
                 $html .= "<h3>".ucfirst($sectionName)."</h3>";
                 $html .= "<ul>";
     
@@ -294,6 +306,9 @@ class AnalysisController{
     
                 $html .= "</ul>";
             }
+            }
+    
+            
         }
     
         return $html;
