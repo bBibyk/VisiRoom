@@ -122,7 +122,7 @@ def google_search(query, domain):
     referenced_page = None
     
     try :
-        results = search(query, num=100)
+        results = search(query)
 
         for idx, result in enumerate(results, start=1):
             if idx == 1:
