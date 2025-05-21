@@ -8,44 +8,62 @@ from mistralai import Mistral
 import requests
 from bs4 import BeautifulSoup
 import re
+import time
+import validators
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
+import html2text
 
-def extract_semantic_text(url):
-    try:
-        response = requests.get(url, timeout=10)
-        response.raise_for_status()
-    except requests.RequestException as e:
-        return f"Error fetching URL: {e}"
+def extract_semantic_text(url, t=0):
+    def is_csr(content):
+        soup = BeautifulSoup(content, 'html.parser')
+        body = soup.body
+        return not body or len(body.get_text(strip=True)) < 50
 
-    soup = BeautifulSoup(response.text, 'html.parser')
+    def get_soup_with_fallback(url, t=0):
+        try:
+            response = requests.get(url, timeout=10)
+            response.raise_for_status()
+            if is_csr(response.text):
+                raise ValueError("Likely a CSR page")
+            return BeautifulSoup(response.text, 'html.parser')
+        except requests.HTTPError :
+            return None
+        except Exception:
+            if t < 3:
+                try:
+                    options = Options()
+                    options.add_argument("--headless")
+                    options.add_argument("--disable-gpu")
+                    options.add_argument("--no-sandbox")
+                    options.add_argument("--enable-unsafe-swiftshader")
+                    options.add_experimental_option("excludeSwitches", ["enable-logging"])
+                    
+                    driver = webdriver.Chrome(options=options)
+                    driver.set_page_load_timeout(10)
+                    driver.get(url)
+                    time.sleep(3)
+                    page_source = driver.page_source
+                    driver.quit()
+                    return BeautifulSoup(page_source, 'html.parser')
+                except Exception:
+                    return None
+            else:
+                return None
 
-    # Remove unwanted tags
-    for tag in soup(['script', 'style', 'header', 'footer', 'nav', 'aside', 'form']):
-        tag.decompose()
+    soup = get_soup_with_fallback(url, t)
+    if soup is None:
+        return f"No content extracted"
 
-    # Remove elements likely to be links, emails, numbers, titles
-    text_elements = soup.find_all(string=True)
-    clean_texts = []
-
-    for text in text_elements:
-        stripped = text.strip()
-        if not stripped:
-            continue
-        if any(keyword in text.lower() for keyword in ["@","mailto:", "http", "www"]):
-            continue
-        if re.search(r'\d{2,}', text):  # Filter out numbers/dates/phone numbers
-            continue
-        if re.match(r'^[A-Z\s]{5,}$', stripped):  # Avoid long uppercase headings
-            continue
-        if len(stripped.split()) < 4:  # Avoid tiny fragments
-            continue
-
-        clean_texts.append(stripped)
-    return "\n".join(clean_texts)
+    handler = html2text.HTML2Text()
+    handler.ignore_links = True
+    handler.ignore_images = True
+    return handler.handle(str(soup))
 
 
 def advise_content(link, query):
     response = {}
-    first_result, current_position, referenced_page = google_search(query, extract_domain_base(link))
+    first_result, current_position, referenced_page = google_search(query, link)
     response["current_position"] = current_position
     response["concurent"] = first_result
     response["referenced_page"] = referenced_page
@@ -89,28 +107,29 @@ def get_advises(reference_content, current_content, query):
                 },
             ]
         )
-        return chat_response.choices[0].message.content
+        return json.dumps({"advise": chat_response.choices[0].message.content})
     except :
-        return "error:unavailable"
+        return json.dumps({"error:unavailable"})
 
-def extract_domain_base(url):
+def normalize_url(url):
     parsed = urlparse(url)
-    base = f"{parsed.scheme}://{parsed.netloc}"
-    return base
+    domain = parsed.netloc.lower().replace('www.', '')
+    return domain
 
-def google_search(query, domain):
+def urls_are_equal(url1, url2):
+    return normalize_url(url1) == normalize_url(url2)
+
+def google_search(query, target):
     first_result = None
     current_position = None
     referenced_page = None
     
     try :
-        results = search(query, num=100)
-
+        results = search(query, num_results=100)
         for idx, result in enumerate(results, start=1):
             if idx == 1:
                 first_result = result
-
-            if domain in result:
+            if (current_position is None) and urls_are_equal(target, result):
                 current_position = idx
                 referenced_page = result
                 break
@@ -120,28 +139,14 @@ def google_search(query, domain):
 
     return first_result, current_position, referenced_page
 
-def is_valid_url(url):
-    try:
-        result = urlparse(url)
-        if not all([result.scheme, result.netloc]):
-            return False
-
-        # Tente de faire une requête GET pour vérifier l'accessibilité
-        response = requests.get(url, timeout=5)
-        return response.status_code == 200 and response.text.strip() != ""
-
-    except Exception:
-        return False
-
-
 def main(link, phrase):
-    if not is_valid_url(link):
+    if not validators.url(link):
         return json.dumps({"erreur": "lien"})
     if (not phrase.strip()) or (len(phrase)>100):
         return json.dumps({"erreur": "phrase"})
     
     result = advise_content(link, phrase)
-    return json.dumps({"advise": result})
+    return result
 
 if __name__ == "__main__":
     if len(sys.argv) != 3:

@@ -1,0 +1,28 @@
+.container-loading {
+    display: none;
+    text-align: center;
+}
+
+.loader {
+    display: none;
+    width: 60px;
+    height: 60px;
+    border: 6px solid #e0f7f6;
+    border-top: 6px solid #38b6ff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 20px;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.message {
+    display: none;
+    color: #38b6ff;
+    font-size: 18px;
+    font-weight: bold;
+}

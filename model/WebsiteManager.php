@@ -51,26 +51,21 @@ class WebsiteManager {
         return $stmt->fetchColumn() > 0;
     }
 
-    public static function add(Website $website): bool {
-        self::checkConnection();
+    public static function add(Website $website): Website {
+    self::checkConnection();
 
-        $stmt = self::$cnx->prepare("INSERT INTO website (domainname, idUser) VALUES (:domainname, :idUser)");
-        return $stmt->execute([
-            ':domainname' => $website->getDomainname(),
-            ':idUser' => $website->getUser()->getId()
-        ]);
-    }
+    // Préparer et exécuter la requête d'insertion
+    $stmt = self::$cnx->prepare("INSERT INTO website (domainname, idUser) VALUES (:domainname, :idUser)");
+    $stmt->bindValue(':domainname', $website->getDomainName(), PDO::PARAM_STR);
+    $stmt->bindValue(':idUser', $website->getUser()->getId(), PDO::PARAM_INT);
+    $stmt->execute();
 
-    public static function update(Website $website): bool {
-        self::checkConnection();
+    // Récupérer l'ID de la dernière insertion
+    $lastInsertId = self::$cnx->lastInsertId();
 
-        $stmt = self::$cnx->prepare("UPDATE website SET domainname = :domainname, idUser = :idUser WHERE id = :id");
-        return $stmt->execute([
-            ':id' => $website->getId(),
-            ':domainname' => $website->getDomainname(),
-            ':idUser' => $website->getUser()->getId()
-        ]);
-    }
+    // Créer un nouvel objet Website avec l'ID récupéré
+    return new Website($lastInsertId, $website->getDomainName(), $website->getUser());
+}
 
     public static function delete(int $id): bool {
         self::checkConnection();

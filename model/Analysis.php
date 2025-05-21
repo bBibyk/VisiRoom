@@ -10,6 +10,7 @@ class Analysis {
         $this->date = $date;
         $this->website = $website;
         $this->analysisType = $analysisType;
+        $this->result = $result;
     }
 
     // Getters

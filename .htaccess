@@ -5,15 +5,23 @@ RewriteCond %{REQUEST_FILENAME} !(.*)\.(css|js|png|jpg)$
 
 #Analysis
 RewriteRule ^analysis index.php?controller=analysis&action=analysis
-RewriteRule ^addAnalysis index.php?controller=analysis&action=add
+RewriteRule ^allAnalysis index.php?controller=analysis&action=all
+RewriteRule ^getAnalysis/(.+)/([0-9]+)/([0-9]+)$ index.php?controller=analysis&action=get&date=$1&idWebsite=$2&idAnalysisType=$3 [L,QSA]
+RewriteRule ^addAnalysisHtml index.php?controller=analysis&action=addTypeHtml
+RewriteRule ^addAnalysisSearch index.php?controller=analysis&action=addTypeSearch
+
+#Contact
+RewriteRule ^contact index.php?controller=contact&action=contact
+RewriteRule ^send index.php?controller=contact&action=send
 
 #Information
 RewriteRule ^aboutus index.php?controller=information&action=aboutus
-RewriteRule ^contact index.php?controller=information&action=contact
 
 #User
 RewriteRule ^registration index.php?controller=user&action=registration
 RewriteRule ^subscribe index.php?controller=user&action=subscribe
 RewriteRule ^addUser index.php?controller=user&action=add
+RewriteRule ^updateSub/([A-Z]) index.php?controller=user&action=updateSub&sub=$1
 RewriteRule ^connection index.php?controller=user&action=connection
+RewriteRule ^deconnection index.php?controller=user&action=deconnection
 RewriteRule ^getUser index.php?controller=user&action=get

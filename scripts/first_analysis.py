@@ -1,36 +1,58 @@
 import requests
+import sys
 import re
 import json
 import webcolors
 from bs4 import BeautifulSoup
 import textstat
 from urllib.parse import urljoin, urlparse
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
+import time
+import validators
 
-def is_valid_url(url, base_domain):
-    parsed_url = urlparse(url)
-    return parsed_url.scheme in ("http", "https") and parsed_url.netloc == base_domain
+def fetch_links_and_content(url, base_domain, t=0):
+    def is_csr(content):
+        soup = BeautifulSoup(content, 'html.parser')
+        body = soup.body
+        return not body or len(body.get_text(strip=True)) < 50
 
-def fetch_links_and_content(url, base_domain, links : bool, t=0):
     try:
-        urls_found = set()
-        page_content = ""
         response = requests.get(url, timeout=5)
         response.raise_for_status()
         page_content = response.text
-        soup = BeautifulSoup(page_content, 'html.parser')
-        
-        if links:
-            for link in soup.find_all('a', href=True):
-                full_url = urljoin(url, link['href'])
-                if is_valid_url(full_url, base_domain):
-                    urls_found.add(full_url)
 
-        return urls_found, soup
-    # Ignorer les erreurs de connexion ou de réponse
+        if is_csr(page_content):
+            raise ValueError("Likely a CSR page")
+        
+        soup = BeautifulSoup(page_content, 'html.parser')
+        return "SSR", soup
+    except requests.HTTPError :
+        return None, None
     except Exception:
-        if t<5:
-            return fetch_links_and_content(url, base_domain, links, t=t+1)
-        else :
+        if t < 5:
+            try:
+                options = Options()
+                options.add_argument("--headless")
+                options.add_argument("--disable-gpu")
+                options.add_argument("--no-sandbox")
+                options.add_argument("--enable-unsafe-swiftshader")
+
+                driver = webdriver.Chrome(options=options)
+                driver.set_page_load_timeout(10)
+                driver.get(url)
+                time.sleep(3)
+
+                page_source = driver.page_source
+                driver.quit()
+                soup = BeautifulSoup(page_source, 'html.parser')
+                return "CSR", soup
+            except Exception:
+                if t < 5:
+                    return fetch_links_and_content(url, base_domain, t=t+1)
+                else:
+                    return None, None
+        else:
             return None, None
     
 
@@ -288,28 +310,24 @@ def analyze_page(soup):
     return result
 
 def crawl_website(start_url):
-    parsed_start = urlparse(start_url)
-    base_domain = parsed_start.netloc
-
-    urls, start_url_content = fetch_links_and_content(start_url, base_domain, links=True)
-    if start_url_content is not None:
-        result = {start_url : analyze_page(start_url_content)}
-        # for url in urls:
-        #     _, content = fetch_links_and_content(url, base_domain, links=False)
-        #     if content is not None:
-        #         result[url] = analyze_page(content)
+    if not validators.url(link):
+        print(json.dumps({"erreur": "lien"}))
     else:
-        result = {"error" : "unavailable"}
-    print(json.dumps(result))
+        parsed_start = urlparse(start_url)
+        base_domain = parsed_start.netloc
 
-if __name__ == '__main__':
-    import sys
+        type, start_url_content = fetch_links_and_content(start_url, base_domain)
+        if start_url_content is not None:
+            result = {start_url : analyze_page(start_url_content),
+                    "type" : type}
+        else:
+            result = {"error" : "unavailable"}
+        print(json.dumps(result))
+
+
+if __name__ == "__main__":
     if len(sys.argv) != 2:
-        sys.exit(1)
-    
-    start_url = sys.argv[1]
-
-    # try:
-    crawl_website(start_url)
-    # except Exception:
-    #     print({})
+        print(json.dumps({"erreur": "arguments"}))
+    else:
+        link = sys.argv[1]
+        crawl_website(link)

@@ -30,7 +30,7 @@ class UserManager {
         $stmt->execute();
         $data = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        return $data ? new User($data['id'], $data['firstname'], $data['surname'], $data['email'], $data['password']) : null;
+        return $data ? new User($data['id'], $data['firstname'], $data['surname'], $data['sub'], $data['email'], $data['password']) : null;
     }
 
     // Récupérer un utilisateur par son email
@@ -42,7 +42,7 @@ class UserManager {
         $stmt->execute();
         $data = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        return $data ? new User($data['id'], $data['firstname'], $data['surname'], $data['email'], $data['password']) : null;
+        return $data ? new User($data['id'], $data['firstname'], $data['surname'], $data['sub'], $data['email'], $data['password']) : null;
     }
 
     // Vérifier si un email existe déjà en BDD
@@ -59,10 +59,11 @@ class UserManager {
     public static function add(User $user): bool {
         self::checkConnection();
 
-        $stmt = self::$cnx->prepare("INSERT INTO user (firstname, surname, email, password) VALUES (:firstname, :surname, :email, :password)");
+        $stmt = self::$cnx->prepare("INSERT INTO user (firstname, surname, sub, email, password) VALUES (:firstname, :surname, :sub, :email, :password)");
         return $stmt->execute([
             ':firstname' => $user->getFirstname(),
             ':surname' => $user->getSurname(),
+            ':sub' => $user->getSub(),
             ':email' => $user->getEmail(),
             ':password' => password_hash($user->getPassword(), PASSWORD_DEFAULT)
         ]);
@@ -72,11 +73,12 @@ class UserManager {
     public static function update(User $user): bool {
         self::checkConnection();
 
-        $stmt = self::$cnx->prepare("UPDATE user SET firstname = :firstname, surname = :surname, email = :email, password = :password WHERE id = :id");
+        $stmt = self::$cnx->prepare("UPDATE user SET firstname = :firstname, surname = :surname, sub = :sub, email = :email, password = :password WHERE id = :id");
         return $stmt->execute([
             ':id' => $user->getId(),
             ':firstname' => $user->getFirstname(),
             ':surname' => $user->getSurname(),
+            ':sub' => $user->getSub(),
             ':email' => $user->getEmail(),
             ':password' => password_hash($user->getPassword(), PASSWORD_DEFAULT)
         ]);

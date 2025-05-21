@@ -10,62 +10,6 @@ body {
     text-align: center;
 }
 
-.navbar {
-    display: flex;
-    justify-content: flex-start; /* Barre totalement à gauche */
-    align-items: center;
-    background-color: #41c1ba;
-    padding: 15px 30px;
-    position: fixed;
-    width: 100%;
-    top: 0;
-    left: 0;
-    z-index: 1000;
-    box-shadow: 0 4px 6px rgba(255, 255, 255, 0.1);
-}
-
-.logo-container {
-    display: flex;
-    align-items: center;
-}
-
-.logo-img {
-    width: 40px;
-    height: 40px;
-    margin-right: 10px;
-}
-
-.logo {
-    font-size: 1.8rem;
-    font-weight: bold;
-    color: #ffffff;
-    font-family: 'Lilita One', cursive;
-}
-
-.navbar ul {
-    list-style: none;
-    display: flex;
-    gap: 30px;
-    margin: 0;
-    padding: 0;
-    margin-left: 20px; /* Décalage à gauche des liens */
-}
-
-.navbar ul li {
-    display: inline;
-}
-
-.navbar ul li a {
-    text-decoration: none;
-    color: #ffffff;
-    font-size: 1.2rem;
-    font-weight: bold;
-    font-family: 'Roboto', sans-serif;
-}
-
-.navbar ul li a:hover {
-    color: #38b6ff;
-}
 /*
 .home-container {
     display: flex;
@@ -104,6 +48,10 @@ h1 {
     margin: 20px 0;
 }
 
+h2{
+    color: black;
+}
+
 p {
     font-size: 1.5rem;
     color: #333333;
@@ -125,7 +73,6 @@ input {
     font-size: 1rem;
     border-radius: 5px;
     border: 1px solid #ccc;
-    width: 400px;
     text-align: center;
     background: #ffffff;
 }
@@ -345,12 +292,4 @@ button:hover {
 .highlight {
     font-weight: bold;
     color: #7cc6d3;
-}
-
-.split input[type="text"],
-.split input[type="url"] {
-    width: 90%;
-    margin-right: auto; /* Évite que l'input colle le bord droit */
-    margin-left: auto;
-    display: block;
 }

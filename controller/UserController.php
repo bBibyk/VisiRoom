@@ -13,6 +13,18 @@ class UserController {
         require_once 'view/subscribeView.php';
     }
 
+    public static function updateSub(){
+        if(!isset($_SESSION["email"]) || empty($_SESSION["email"])){
+            header("location: ../connection");
+        }
+
+        $user = UserManager::getByEmail($_SESSION['email']);
+        $user->setSub($_GET["sub"]);
+        UserManager::update($user);
+
+        require_once 'view/subscribeView.php';
+    }
+
     // Traiter l'inscription
     public static function add() {
         $errors = [];
@@ -49,7 +61,7 @@ class UserController {
 
             // Si pas d'erreurs, on ajoute l'utilisateur
             if (empty($errors)) {
-                $user = new User(0, $firstname, $surname, $email, $password);
+                $user = new User(0, $firstname, $surname, 'F', $email, $password);
                 if (UserManager::add($user)) {
                     $_SESSION["email"] = $user->getEmail();
                     header('location: analysis');
@@ -65,6 +77,11 @@ class UserController {
 
     public static function connection(){
         require_once 'view/connectionView.php';
+    }
+
+    public static function deconnection(){
+        $_SESSION = [];
+        header("location: analysis");
     }
 
     public static function get(){

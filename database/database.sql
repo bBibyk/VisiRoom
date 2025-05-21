@@ -6,6 +6,7 @@ create table `user`(
     `id` integer not null auto_increment,
     `firstname` varchar(100),
     `surname` varchar(100),
+    `sub` CHAR(1),
     `email` varchar(100),
     `password` varchar(1000),
     constraint `pk_user` primary key(`id`)
@@ -26,7 +27,7 @@ create table `analysisType`(
 )engine=InnoDB auto_increment=1 default charset=utf8 collate=utf8_general_ci;
 
 create table `analysis`(
-    `date` Date not null,
+    `date` DateTime not null,
     `idWebsite` integer not null,
     `idAnalysisType` integer not null,
     `result` TEXT,
