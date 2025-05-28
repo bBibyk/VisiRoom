@@ -1,3 +1,4 @@
+
 @import url('https://fonts.googleapis.com/css2?family=Lilita+One&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
 
@@ -66,7 +67,7 @@ body {
 .navbar ul li a:hover {
     color: #38b6ff;
 }
-
+/*
 .home-container {
     display: flex;
     flex-direction: column;
@@ -76,7 +77,7 @@ body {
     padding-top: 80px;
     background: transparent;
 }
-
+*/
 .overlay {
     position: absolute;
     top: 0;
@@ -272,4 +273,87 @@ button:hover {
 .signup-btn:hover {
     background-color: #38b6ff;
     color: white;
+}
+
+/* ==== ÉCRAN DIVISÉ ==== */
+.split-screen {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 100px;
+    gap: 30px;
+    padding: 30px;
+}
+
+.split {
+    flex: 1 1 400px;
+    max-width: 500px;
+    background-color: #ffffff;
+    border-radius: 15px;
+    padding: 30px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.split:hover {
+    transform: scale(1.02);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+}
+
+.split h2 {
+    font-size: 1.8rem;
+    color: #38b6ff;
+    font-family: 'Lilita One', cursive;
+    margin-bottom: 15px;
+}
+
+.split p {
+    font-size: 1.1rem;
+    color: #444;
+    margin-bottom: 20px;
+}
+
+.split input,
+.split button {
+    width: 100%;
+    margin-bottom: 15px;
+}
+
+.target-form input {
+    margin-bottom: 15px;
+}
+
+.intro-message {
+    text-align: center;
+    margin: 40px auto 20px auto;
+    max-width: 800px;
+    padding: 0 20px;
+}
+
+.intro-message h1 {
+    font-size: 2.5rem;
+    font-family: 'Lilita One', cursive;
+    color: #508895;
+    margin-bottom: 10px;
+}
+
+.intro-message p {
+    font-size: 1.2rem;
+    font-family: 'Roboto', sans-serif;
+    color: #666;
+}
+
+.highlight {
+    font-weight: bold;
+    color: #7cc6d3;
+}
+
+
+.split input[type="text"],
+.split input[type="url"],
+.split button,
+.target-form button {
+    width: 90%;
+    margin: 0 auto 15px auto;
+    display: block;
 }
